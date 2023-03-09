@@ -1,0 +1,127 @@
+{
+  "name": "auctionsoft",
+  "displayName": "Auctioneer Software",
+  "publisher": "Jacob @ SND",
+  "description": "Auctioneer Software",
+  "icon": "resources/AS.png",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AuctionSoft"
+  },
+  "engines": {
+    "vscode": "^1.72.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:as2.clients.search",
+    "onCommand:as2.coreUpdate",
+    "onCommand:as2.devInit",
+    "onCommand:as2.showClients",
+    "onCommand:as2.start",
+    "onView:as2-clients"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "as2-container",
+          "title": "AS2",
+          "icon": "resources/AS.svg"
+        }
+      ]
+    },
+    "views": {
+      "as2-container": [
+        {
+          "id": "as2-clients",
+          "name": "Clients",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "as2.start",
+        "title": "Start Project",
+        "category": "AS2"
+      },
+      {
+        "command": "as2.coreUpdate",
+        "title": "Core Update",
+        "category": "AS2 Custom"
+      },
+      {
+        "command": "as2.devInit",
+        "title": "Dev Init",
+        "category": "AS2 Custom"
+      },
+      {
+        "command": "as2.clients.search",
+        "title": "Search",
+        "category": "AS2 Clients"
+      },
+      {
+        "command": "as2.showClients",
+        "title": "AS2 Clients: Show"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "as2.showClients",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Auctioneer Software",
+      "properties": {
+        "as2.clients.core": {
+          "type": "string",
+          "description": "Path to local core repo"
+        },
+        "as2.clients.custom": {
+          "type": "string",
+          "description": "Path to custom repos directory"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "install:all": "npm install && cd webview-ui && npm install",
+    "start:webview": "cd webview-ui && npm run start",
+    "build:webview": "cd webview-ui && npm run build",
+    "vscode:prepublish": "npm run compile",
+    "vscode:package": "npx vsce package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.72.0",
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
+    "eslint": "^8.24.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0",
+    "typescript": "^4.8.4",
+    "ts-loader": "^9.4.1",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "@vscode/test-electron": "^2.1.5"
+  },
+  "dependencies": {
+    "@octokit/rest": "^19.0.5",
+    "axios": "^1.2.2",
+    "@vscode/webview-ui-toolkit": "^1.2.0",
+    "@vscode/codicons": "0.0.20"
+  }
+}

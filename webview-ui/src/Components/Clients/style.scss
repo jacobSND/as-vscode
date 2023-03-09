@@ -1,0 +1,55 @@
+#search-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  
+  #search-input {
+    flex-grow: 1;
+  }
+  
+  #search-button {
+    width: 4rem;
+  }
+}
+
+#loader, #no-results {
+  display: flex;
+  align-items: center;
+  margin: 0.75rem 0;
+}
+
+#loader vscode-progress-ring {
+  margin: 0 0.5rem;
+}
+
+.results-container {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+
+  vscode-progress-ring {
+    align-self: center;
+    margin: 50px;
+  }
+}
+
+
+
+
+
+// .results-container *[data-value]:not(vscode-button[appearance="icon"]) {
+//   /* visibility: hidden; */
+// }
+
+// .results-container *[data-value]:not(vscode-button[appearance="icon"]):not(vscode-link):after {
+//   content: attr(data-value);
+// }
+// .results-container .title [data-field="key"] {
+//   text-transform: uppercase;
+// }
+// .results-container .title [data-field="name"] {
+//   text-transform: capitalize;
+// }
+

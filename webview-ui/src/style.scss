@@ -1,0 +1,15 @@
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100%;
+
+  & > * {
+    margin: 0;
+  }
+}
+
+h1 {
+  font-size: 1.5em;
+}

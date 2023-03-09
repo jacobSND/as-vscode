@@ -1,0 +1,65 @@
+.client {
+  --badge-background: var(--button-primary-background);
+  
+  .title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    font-size: 16px;
+
+    .key {
+      text-transform: uppercase;
+    }
+  }
+  .subtitle {
+    display: flex;
+    align-items: center;
+  }
+  details summary {
+    margin: 1rem 0;
+    position: relative;
+    cursor: pointer;
+  }
+  .tags {
+    position: absolute;
+    right: 0;
+    
+    & > * {
+      margin-right: 1rem;
+    }
+    .tag, .tag span {
+      text-transform: capitalize !important;
+    }
+  }
+  .details-grid {
+    vscode-data-grid-row {
+      font-size: 10px;
+    }
+  }
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    padding-top: 15px;
+    
+    .codicon {
+      font-size: 24px;
+      color: var(--vscode-editor-foreground, #abb2bf);
+    }
+
+    img {
+      max-width: 25px;
+    }
+  }
+  .details {
+    margin-top: 0.5rem;
+  }
+  vscode-divider {
+    display: block;
+    margin-top: 2rem;
+  }
+
+  &:last-of-type vscode-divider {
+    display: none;
+  }
+}
