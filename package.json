@@ -87,6 +87,11 @@
         "as2.clients.custom": {
           "type": "string",
           "description": "Path to custom repos directory"
+        },
+        "as2.clients.path_overrides": {
+          "type": "object",
+          "description": "Provide custom overrides to local paths",
+          "additionalProperties": true
         }
       }
     }

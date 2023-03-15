@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as fs from 'fs';
+import * as os from 'os';
 import { search as ghSearch } from "./github";
 
 export async function runTerminalCommand(command: string, name?: string, ttl?: number) {
@@ -12,6 +13,7 @@ export async function runTerminalCommand(command: string, name?: string, ttl?: n
 }
 
 export function openLocalProject({ localPath, ...client }: any) {
+  localPath = localPath.replace(/^\~\//, os.homedir() + '/');
   if (fs.existsSync(localPath)) {
     runTerminalCommand(`code ${localPath} && exit`);
   } else {
