@@ -9,8 +9,6 @@ export const REPO = 'as2-clients';
 let gh: Octokit | undefined = undefined;
 let subscription: any = undefined;
 
-const settings = vscode.workspace.getConfiguration('as2.clients');
-
 function registerListeners() {
   if (!subscription) { // handle login/out
     subscription = vscode.authentication.onDidChangeSessions(async e => {
@@ -75,6 +73,8 @@ async function getEnv(path: string) {
 }
 
 export async function search(query: string) {
+  const settings = vscode.workspace.getConfiguration('as2.clients');
+
   const gh = await getGh();
   const searchResults = await gh.rest.search.code({
     q: `q=${query}+repo:${OWNER}/${REPO}`,
@@ -84,6 +84,15 @@ export async function search(query: string) {
     const [_, type, key] = client.path.match(/^(client|custom|disabled_client)_env\/(.+)\.env$/i) || [];
     const env = key ? await getEnv(client.path) : null;
     if (env) {
+      const clientKey = env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY;
+      let localPath: string = type === 'client'
+        ? settings.core
+        : `${settings.custom}/${clientKey}-auctionsoftware`;
+
+      if (settings.path_overrides?.[clientKey]) {
+        localPath = settings.path_overrides[clientKey];
+      }
+
       results.push({
         ...env,
         label: key || client.path || '',
@@ -97,9 +106,7 @@ export async function search(query: string) {
         repo: type === 'client'
           ? 'https://github.com/AuctionSoft/auctionsoftware'
           : `https://github.com/AuctionSoft/${env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY}-auctionsoftware`,
-        localPath: type === 'client'
-          ? settings.core
-          : `${settings.custom}/${env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY}-auctionsoftware`,
+        localPath,
       });
     }
   }
