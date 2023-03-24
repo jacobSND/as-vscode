@@ -1,4 +1,6 @@
-# as README
+# README
+
+How to install manually: https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix
 
 ## Features
 
