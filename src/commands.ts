@@ -3,8 +3,13 @@ import * as fs from 'fs';
 import * as os from 'os';
 import { search as ghSearch } from "./github";
 
-export async function runTerminalCommand(command: string, name?: string, ttl?: number) {
+type TerminalCommandOptions = {
+  name?: string,
+  ttl?: number,
+}
+export async function runTerminalCommand(command: string, { name, ttl }: TerminalCommandOptions = {}) {
   const terminal = vscode.window.createTerminal(name);
+  if (ttl === 0) command += ' && exit';
   terminal.sendText(command);
   terminal.show();
   if (ttl) {
@@ -15,10 +20,10 @@ export async function runTerminalCommand(command: string, name?: string, ttl?: n
 export function openLocalProject({ localPath, ...client }: any) {
   localPath = localPath.replace(/^\~\//, os.homedir() + '/');
   if (fs.existsSync(localPath)) {
-    runTerminalCommand(`code ${localPath} && exit`);
+    runTerminalCommand(`code ${localPath}`, { ttl: 0 });
   } else {
     const options = [
-      { label: 'Clone Locally', onClick: () => runTerminalCommand(`git clone ${client.repo} ${localPath} && code ${localPath} && exit`) },
+      { label: 'Clone Locally', onClick: () => runTerminalCommand(`git clone ${client.repo} ${localPath} && code ${localPath}`, { ttl: 0 }) },
       { label: 'Open on Github.dev', onClick: () => vscode.env.openExternal(vscode.Uri.parse(client.repo.replace('.com', '.dev'))) },
     ];
     vscode.window.showErrorMessage(
@@ -117,7 +122,7 @@ export async function clientSearch() {
           iconPath: new vscode.ThemeIcon('files'),
           onSelect: () => vscode.env.clipboard.writeText(selection.db),
         }],
-        onSelect: () => runTerminalCommand(`ssh root@${selection.db}`, `${selection.key} (AS2)`),
+        onSelect: () => runTerminalCommand(`ssh root@${selection.db}`, { name: `${selection.key} (AS2)`, ttl: 0 }),
       },
       {
         label: '$(gear) View Env',
