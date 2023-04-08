@@ -1,7 +1,7 @@
 {
   "name": "auctionsoft",
   "displayName": "Auctioneer Software",
-  "publisher": "Jacob @ SND",
+  "publisher": "JacobSND",
   "description": "Auctioneer Software",
   "icon": "resources/AS.png",
   "version": "1.0.1",
@@ -101,6 +101,7 @@
     "start:webview": "cd webview-ui && npm run start",
     "build:webview": "cd webview-ui && npm run build",
     "vscode:prepublish": "npm run compile",
+    "vscode:publish": "npx vsce publish",
     "vscode:package": "npx vsce package",
     "compile": "webpack",
     "watch": "webpack --watch",
