@@ -6,9 +6,14 @@ const initialState: any = vscode.getState();
 export const clients = createMutable({
   list: initialState?.clients || [],
   loading: false,
+  query: '',
   search(value = '') {
-    this.loading = true;
-    return vscode.postMessage({ command: 'search', value });
+    this.query = value;
+    if (value) {
+      this.loading = true;
+      return vscode.postMessage({ command: 'search', value });
+    }
+    this.list = [];
   },
   set(clients = []) {
     this.list = clients;

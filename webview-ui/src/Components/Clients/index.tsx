@@ -29,26 +29,22 @@ export const Clients: Component = () => {
         </vscode-text-field>
         <vscode-button id="search-button" type="submit" onClick={onSearch}>search</vscode-button>
       </form>
-      {(clients.list.length || clients.loading) && (
+      {!!clients?.query && (
         <div class="results-container">
           {clients.loading && <vscode-progress-ring />}
-          {!!clients.list.length ? (
+          {!clients?.loading && (
             <div id="clients">
-              {clients.list.length > 1 && (
-                <div class="results-details">
-                  <div class="count">{clients.list.length} clients found</div>
+              <div class="results-details">
+                <div class="count">
+                  {clients?.list?.length} clients found
                 </div>
-              )}
+              </div>
               {clients.list.map((client: any) => (
                 <Client
                   client={client}
                   sendMessage={(message: any) => vscode.postMessage(message)}
                 />
               ))}
-            </div>
-          ) : (
-            <div id="no-results">
-              <p>No Clients found</p>
             </div>
           )}
         </div>
