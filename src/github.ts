@@ -73,42 +73,46 @@ async function getEnv(path: string) {
 }
 
 export async function search(query: string) {
-  const settings = vscode.workspace.getConfiguration('as2.clients');
-
-  const gh = await getGh();
-  const searchResults = await gh.rest.search.code({
-    q: `q=${query}+repo:${OWNER}/${REPO}`,
-  });
   const results: any[] = [];
-  for (const client of searchResults.data.items || []) {
-    const [_, type, key] = client.path.match(/^(client|custom|disabled_client)_env\/(.+)\.env$/i) || [];
-    const env = key ? await getEnv(client.path) : null;
-    if (env) {
-      const clientKey = env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY;
-      let localPath: string = type === 'client'
-        ? settings.core
-        : `${settings.custom}/${clientKey}-auctionsoftware`;
+  try {
+    const settings = vscode.workspace.getConfiguration('as2.clients');
 
-      if (settings.path_overrides?.[clientKey]) {
-        localPath = settings.path_overrides[clientKey];
+    const gh = await getGh();
+    const searchResults = await gh.rest.search.code({
+      q: `q=${query}+repo:${OWNER}/${REPO}`,
+    });
+    for (const client of searchResults.data.items || []) {
+      const [_, type, key] = client.path.match(/^(client|custom|disabled_client)_env\/(.+)\.env$/i) || [];
+      const env = key ? await getEnv(client.path) : null;
+      if (env) {
+        const clientKey = env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY;
+        let localPath: string = type === 'client'
+          ? settings.core
+          : `${settings.custom}/${clientKey}-auctionsoftware`;
+
+        if (settings.path_overrides?.[clientKey]) {
+          localPath = settings.path_overrides[clientKey];
+        }
+
+        results.push({
+          ...env,
+          label: key || client.path || '',
+          key: key.toLowerCase(),
+          name: env.CLIENT_NAME,
+          githubUrl: client.html_url,
+          type: type === 'client' ? 'core' : type,
+          cluster: Number(env.DB_IP_ADDR.split('.')[2].slice(-1)) + 1,
+          domain: `${env.APP_DEFAULT_PROTOCOL || 'https'}://${env.APP_HOSTNAME}`,
+          db: `${env.DB_IP_ADDR}`,
+          repo: type === 'client'
+            ? 'https://github.com/AuctionSoft/auctionsoftware'
+            : `https://github.com/AuctionSoft/${env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY}-auctionsoftware`,
+          localPath,
+        });
       }
-
-      results.push({
-        ...env,
-        label: key || client.path || '',
-        key: key.toLowerCase(),
-        name: env.CLIENT_NAME,
-        githubUrl: client.html_url,
-        type: type === 'client' ? 'core' : type,
-        cluster: Number(env.DB_IP_ADDR.split('.')[2].slice(-1))+1,
-        domain: `${env.APP_DEFAULT_PROTOCOL || 'https'}://${env.APP_HOSTNAME}`,
-        db: `${env.DB_IP_ADDR}`,
-        repo: type === 'client'
-          ? 'https://github.com/AuctionSoft/auctionsoftware'
-          : `https://github.com/AuctionSoft/${env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY}-auctionsoftware`,
-        localPath,
-      });
     }
+  } catch (e: any) {
+    vscode.window.showWarningMessage(`Github Error: ${e?.message || 'Unknown error'}`);
   }
   return results;
 }
