@@ -11,6 +11,7 @@ function onSearch(e?: any) {
 }
 
 export const Clients: Component = () => {
+  window.addEventListener("focus", () => document.getElementById('search-input')?.focus());
   return (
     <main>
       <form id="search-container" onSubmit={onSearch}>
