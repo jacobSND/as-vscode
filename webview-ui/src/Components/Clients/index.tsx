@@ -33,13 +33,13 @@ export const Clients: Component = () => {
       {!!clients?.query && (
         <div class="results-container">
           {clients.loading && <vscode-progress-ring />}
-          {!clients?.loading && (
-            <div id="clients">
-              <div class="results-details">
-                <div class="count">
-                  {clients?.list?.length} clients found
-                </div>
+          {!clients?.loading && <>
+            <div class="results-details">
+              <div class="count">
+                {clients?.list?.length} clients found
               </div>
+            </div>
+            <div id="clients">
               {clients.list.map((client: any) => (
                 <Client
                   client={client}
@@ -47,7 +47,7 @@ export const Clients: Component = () => {
                 />
               ))}
             </div>
-          )}
+          </>}
         </div>
       )}
     </main>

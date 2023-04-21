@@ -32,8 +32,8 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
             <vscode-tag class="tag"><span class="cluster">Cluster {client.cluster}</span></vscode-tag>
           </span>
         </summary>
-        <vscode-data-grid class="details-grid" generate-header="sticky" aria-label="Details">
-          <vscode-data-grid-row row-type="sticky-header">
+        <vscode-data-grid class="details-grid" generate-header="default" aria-label="Details">
+          <vscode-data-grid-row row-type="header">
             <vscode-data-grid-cell cell-type="columnheader" grid-column="1">Field</vscode-data-grid-cell>
             <vscode-data-grid-cell cell-type="columnheader" grid-column="2">Value</vscode-data-grid-cell>
           </vscode-data-grid-row>
@@ -65,7 +65,6 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
           <span class="codicon codicon-database"></span>
         </vscode-link>
       </div>
-      <vscode-divider></vscode-divider>
     </div>
   );
 }

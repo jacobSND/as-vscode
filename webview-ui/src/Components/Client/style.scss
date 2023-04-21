@@ -1,5 +1,16 @@
 .client {
   --badge-background: var(--button-primary-background);
+  padding: 10px 15px;
+
+  &:not(&:last-of-type) {
+    border-bottom: calc(var(--border-width) * 1px) solid var(--divider-background);
+  }
+
+  &:not(:only-child):hover {
+    color: var(--vscode-list-activeSelectionForeground);
+    background-color: var(--vscode-list-inactiveSelectionBackground);
+  }
+
   
   .title {
     display: flex;
