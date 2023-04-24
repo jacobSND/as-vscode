@@ -43,21 +43,61 @@
         }
       ]
     },
+    "menus": {
+      "view/title": [
+        {
+          "command": "as2.settings",
+          "when": "view == as2-clients",
+          "group": "navigation"
+        },
+        {
+          "command": "as2.start",
+          "when": "view == as2-clients",
+          "group": "menu@1"
+        },
+        {
+          "command": "as2.logs",
+          "when": "view == as2-clients",
+          "group": "menu@2"
+        },
+        {
+          "command": "as2.coreUpdate",
+          "when": "view == as2-clients",
+          "group": "menu@3"
+        },
+        {
+          "command": "as2.devInit",
+          "when": "view == as2-clients",
+          "group": "menu@4"
+        }
+      ]
+    },
     "commands": [
       {
+        "command": "as2.settings",
+        "title": "Settings",
+        "icon": "$(gear)",
+        "category": "AS2"
+      },
+      {
         "command": "as2.start",
-        "title": "Start Project",
+        "title": "Start Project (working directory)",
         "category": "AS2"
       },
       {
         "command": "as2.coreUpdate",
-        "title": "Core Update",
+        "title": "Core Update (working directory)",
         "category": "AS2 Custom"
       },
       {
         "command": "as2.devInit",
-        "title": "Dev Init",
+        "title": "Dev Init (working directory)",
         "category": "AS2 Custom"
+      },
+      {
+        "command": "as2.logs",
+        "title": "Show Logs",
+        "category": "AS2"
       },
       {
         "command": "as2.clients.search",
