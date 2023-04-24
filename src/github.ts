@@ -93,8 +93,8 @@ export async function search(query: string) {
           ? settings.core
           : `${settings.custom}/${clientKey}-auctionsoftware`;
 
-        if (settings.path_overrides?.[clientKey]) {
-          localPath = settings.path_overrides[clientKey];
+        if (settings.pathOverrides?.[clientKey] || settings.path_overrides?.[clientKey]) {
+          localPath = settings.pathOverrides?.[clientKey] || settings.path_overrides?.[clientKey];
         }
 
         results.push({
