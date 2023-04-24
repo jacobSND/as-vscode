@@ -5,25 +5,27 @@ import './style.scss';
 export const Client: Component<any> = ({ client, sendMessage }) => {
   return (
     <div id={`client-${client.key}`} class="client">
-      <h2 class="title">
-        <vscode-button
-          title="Copy Key"
-          appearance="icon"
-          onClick={() => sendMessage({ command: 'copy', value: client.key })}
-        ><span class="codicon codicon-key"></span></vscode-button>
-        <div>
-          <span class="key">{client.key}</span>:&nbsp;
-          <span class="name">{client.name}</span>
+      <div class="main">
+        <h2 class="title">
+          <vscode-button
+            title="Copy Key"
+            appearance="icon"
+            onClick={() => sendMessage({ command: 'copy', value: client.key })}
+          ><span class="codicon codicon-key"></span></vscode-button>
+          <div>
+            <span class="key">{client.key}</span>:&nbsp;
+            <span class="name">{client.name}</span>
+          </div>
+        </h2>
+        <div class="subtitle">
+          <vscode-button
+            title="Copy URL"
+            appearance="icon"
+            class="domain"
+            onClick={() => sendMessage({ command: 'copy', value: client.domain })}
+          ><span class="codicon codicon-globe"></span></vscode-button>
+          <vscode-link class="domain" href={client.domain}>{client.domain.replace('https://', '')}</vscode-link>
         </div>
-      </h2>
-      <div class="subtitle">
-        <vscode-button
-          title="Copy URL"
-          appearance="icon"
-          class="domain"
-          onClick={() => sendMessage({ command: 'copy', value: client.domain })}
-        ><span class="codicon codicon-globe"></span></vscode-button>
-        <vscode-link class="domain" href={client.domain}>{client.domain.replace('https://', '')}</vscode-link>
       </div>
       <details>
         <summary> Details

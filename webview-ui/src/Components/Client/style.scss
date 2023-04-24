@@ -1,5 +1,6 @@
 .client {
   --badge-background: var(--button-primary-background);
+  background-color: var(--vscode-sideBar-background);
   padding: 10px 15px;
 
   &:not(&:last-of-type) {
@@ -8,23 +9,30 @@
 
   &:not(:only-child):hover {
     color: var(--vscode-list-activeSelectionForeground);
-    background-color: var(--vscode-list-inactiveSelectionBackground);
+    background-color: var(--vscode-list-activeSelectionBackground);
   }
 
+  &:has(details[open]) .main {
+    position: sticky;
+    top: 0;
+  }
   
-  .title {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0;
-    font-size: 16px;
+  .main {
+    background-color: inherit;
+    .title {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0;
+      font-size: 16px;
 
-    .key {
-      text-transform: uppercase;
+      .key {
+        text-transform: uppercase;
+      }
     }
-  }
-  .subtitle {
-    display: flex;
-    align-items: center;
+    .subtitle {
+      display: flex;
+      align-items: center;
+    }
   }
   details summary {
     margin: 1rem 0;
