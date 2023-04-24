@@ -25,6 +25,9 @@ async function getGh(createIfNone = true): Promise<Octokit> {
   }
 
   const session = await vscode.authentication.getSession(GITHUB_AUTH_PROVIDER_ID, SCOPES, { createIfNone });
+  if (!session?.accessToken) {
+    vscode.window.showErrorMessage('GitHub access denied');
+  }
   gh = new Octokit({ auth: session!.accessToken });
   registerListeners();
 
