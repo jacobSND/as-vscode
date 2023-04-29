@@ -6,10 +6,12 @@ import { search as ghSearch } from "./github";
 type TerminalCommandOptions = {
   name?: string,
   ttl?: number,
-}
+};
 export async function runTerminalCommand(command: string, { name, ttl }: TerminalCommandOptions = {}) {
   const terminal = vscode.window.createTerminal(name);
-  if (ttl === 0) command += ' && exit';
+  if (ttl === 0) {
+    command += ' && exit';
+  }
   terminal.sendText(command);
   terminal.show();
   if (ttl) {

@@ -81,8 +81,11 @@ export async function search(query: string) {
     const settings = vscode.workspace.getConfiguration('as2.clients');
 
     const gh = await getGh();
-    const searchResults = await gh.rest.search.code({
-      q: `q=${query}+repo:${OWNER}/${REPO}`,
+    const searchResults = await gh.request('GET /search/code', {
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      q: `${query}+repo:${OWNER}/${REPO}`,
     });
     for (const client of searchResults.data.items || []) {
       const [_, type, key] = client.path.match(/^(client|custom|disabled_client)_env\/(.+)\.env$/i) || [];
