@@ -48,6 +48,7 @@
     }
     .tag, .tag span {
       text-transform: capitalize !important;
+      color: var(--button-primary-foreground);
     }
   }
   .details-grid {
