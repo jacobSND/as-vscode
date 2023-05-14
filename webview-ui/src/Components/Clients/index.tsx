@@ -30,7 +30,7 @@ export const Clients: Component = () => {
         </vscode-text-field>
         <vscode-button id="search-button" type="submit" onClick={onSearch}>search</vscode-button>
       </form>
-      {!!clients?.query && (
+      {(!!clients?.query || !!clients?.list?.length) && (
         <div class="results-container">
           {clients.loading && <vscode-progress-ring />}
           {!clients?.loading && <>
