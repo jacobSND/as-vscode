@@ -33,9 +33,10 @@
   height: 100%;
 
   .results-details {
+    display: flex;
     padding: 0px 15px 8px 15px;
     .count {
-      color: #cccccca6;
+      color: var(--vscode-search-resultsInfoForeground, #cccccca6);
     }
   }
 

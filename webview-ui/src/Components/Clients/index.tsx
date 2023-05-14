@@ -38,6 +38,8 @@ export const Clients: Component = () => {
               <div class="count">
                 {clients?.list?.length} clients found
               </div>
+              <span class="separator">&nbsp;-&nbsp;</span>
+              <vscode-link class="search-url" href={`https://github.com/AuctionSoft/as2-clients/search?q=${clients.query}`}>View on Github</vscode-link>
             </div>
             <div id="clients">
               {clients.list.map((client: any) => (

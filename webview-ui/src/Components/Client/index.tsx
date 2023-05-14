@@ -1,5 +1,6 @@
 import { Component } from "solid-js";
-import { githubDevIcon, vsCodeIcon } from './icons';
+import VscodeIcon from '../../assets/vscode.svg?component-solid';
+import GitDevIcon from '../../assets/github-dev.svg?component-solid';
 import './style.scss';
 
 export const Client: Component<any> = ({ client, sendMessage }) => {
@@ -58,10 +59,10 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
           <span class="codicon codicon-github"></span>
         </vscode-link>
         <vscode-link class="folder" title="Open in VS Code" onClick={() => sendMessage({ command: 'openProject', value: { ...client } })}>
-          <img src={vsCodeIcon} alt="VS Code" />
+          <VscodeIcon />
         </vscode-link>
         <vscode-link class="github-dev" title="Open on Github.dev" href={client.repo.replace('.com', '.dev')}>
-          <img src={githubDevIcon} alt="github.dev" />
+          <GitDevIcon />
         </vscode-link>
         <vscode-link class="db" title="Connect to DB" onClick={() => sendMessage({ command: 'connectDb', value: { ...client } })}>
           <span class="codicon codicon-database"></span>

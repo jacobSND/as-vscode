@@ -23,7 +23,7 @@
       display: flex;
       align-items: center;
       margin-bottom: 0;
-      font-size: 16px;
+      font-size: 1em;
 
       .key {
         text-transform: uppercase;
@@ -40,8 +40,8 @@
     cursor: pointer;
   }
   .tags {
-    position: absolute;
-    right: 0;
+    display: flex;
+    justify-content: flex-end;
     
     & > * {
       margin-right: 1rem;
@@ -62,13 +62,11 @@
     gap: 15px;
     padding-top: 15px;
     
-    .codicon {
+    img, svg, image, .codicon {
       font-size: 24px;
       color: var(--vscode-editor-foreground, #abb2bf);
-    }
-
-    img {
-      max-width: 25px;
+      width: 1em;
+      height: 1em;
     }
   }
   .details {
