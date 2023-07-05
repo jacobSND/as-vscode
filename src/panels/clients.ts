@@ -48,7 +48,8 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
           return vscode.env.clipboard.writeText(value);
         }
         case "connectDb": {
-          return runTerminalCommand(`ssh root@${value.db}`, { name: `${value.key} (AS2)`, ttl: 0 });
+          const user = value?.cluster < 4 ? 'root' : 'snd_root';
+          return runTerminalCommand(`ssh ${user}@${value.db}`, { name: `${value.key} (AS2)`, ttl: 0 });
         }
         case "openProject": {
           return openLocalProject(value);
