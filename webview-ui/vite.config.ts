@@ -5,7 +5,7 @@ import solidSvg from 'vite-plugin-solid-svg'
 export default defineConfig({
   plugins: [solidPlugin(), solidSvg()],
   server: {
-    port: 3000,
+    port: 3300,
   },
   build: {
     target: 'esnext',

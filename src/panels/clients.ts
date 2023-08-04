@@ -104,7 +104,7 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
     const DEV = this.context.extensionMode === vscode.ExtensionMode.Development;
 
     const stylesUri = getUri(webview, this.context.extensionUri, ["webview-ui", "build", "assets", "index.css"]);
-    const scriptUri = DEV ? 'http://localhost:3000/src/index.tsx' : getUri(webview, this.context.extensionUri, ["webview-ui", "build", "assets", "index.js"]);
+    const scriptUri = DEV ? 'http://localhost:3300/src/index.tsx' : getUri(webview, this.context.extensionUri, ["webview-ui", "build", "assets", "index.js"]);
     const codiconsUri = getUri(webview, this.context.extensionUri, ['node_modules', '@vscode/codicons', 'dist', 'codicon.css']);
 
     return /*html*/ `
