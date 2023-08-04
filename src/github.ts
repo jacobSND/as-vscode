@@ -79,6 +79,11 @@ export async function search(query: string) {
   const results: any[] = [];
   try {
     const settings = vscode.workspace.getConfiguration('as2.clients');
+    const overrides = {
+      ...settings.overrides,
+      mark: { cluster: 'Marknet', sshUser: 'snd_root', ...settings?.overrides?.mark },
+      jmab: { cluster: 'JMA', ...settings?.overrides?.jmab },
+    };
 
     const gh = await getGh();
     const searchResults = await gh.request('GET /search/code', {
@@ -96,9 +101,10 @@ export async function search(query: string) {
           ? settings.core
           : `${settings.custom}/${clientKey}-auctionsoftware`;
 
-        if (settings.pathOverrides?.[clientKey] || settings.path_overrides?.[clientKey]) {
-          localPath = settings.pathOverrides?.[clientKey] || settings.path_overrides?.[clientKey];
-        }
+        localPath = settings.pathOverrides?.[clientKey] || settings.path_overrides?.[clientKey] || localPath;
+
+        const db_identifying_octet = env.DB_IP_ADDR.split('.')[2]; // TODO: find a better way to automatically determine cluster
+        const cluster = db_identifying_octet.startsWith('11') ? Number(db_identifying_octet.slice(-1)) + 1 : undefined;
 
         results.push({
           ...env,
@@ -107,13 +113,14 @@ export async function search(query: string) {
           name: env.CLIENT_NAME,
           githubUrl: client.html_url,
           type: type === 'client' ? 'core' : type,
-          cluster: Number(env.DB_IP_ADDR.split('.')[2].slice(-1)) + 1,
+          cluster,
           domain: `${env.APP_DEFAULT_PROTOCOL || 'https'}://${env.APP_HOSTNAME}`,
           db: `${env.DB_IP_ADDR}`,
           repo: type === 'client'
             ? 'https://github.com/AuctionSoft/auctionsoftware'
             : `https://github.com/AuctionSoft/${env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY}-auctionsoftware`,
           localPath,
+          ...overrides?.[clientKey],
         });
       }
     }

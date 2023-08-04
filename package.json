@@ -128,9 +128,9 @@
           "type": "string",
           "description": "Path to custom repos directory"
         },
-        "as2.clients.pathOverrides": {
+        "as2.clients.overrides": {
           "type": "object",
-          "description": "Provide custom overrides to local paths",
+          "description": "Provide overrides by client key (localPath, cluster, etc)",
           "additionalProperties": true
         }
       }

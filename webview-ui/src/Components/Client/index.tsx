@@ -32,7 +32,11 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
         <summary> Details
           <span class="tags">
             <vscode-tag class="tag"><span class="type">{client.type}</span></vscode-tag>
-            <vscode-tag class="tag"><span class="cluster">Cluster {client.cluster}</span></vscode-tag>
+            {client.cluster ? (
+              <vscode-tag class="tag"><span class="cluster">Cluster {client.cluster}</span></vscode-tag>
+            ) : (
+              <vscode-tag class="tag"><span class="cluster">{client.db}</span></vscode-tag>
+            )}
           </span>
         </summary>
         <vscode-data-grid class="details-grid" generate-header="default" aria-label="Details">
