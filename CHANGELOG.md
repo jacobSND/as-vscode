@@ -4,6 +4,7 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 ## [Unreleased]
 
+- Migrate to new settings override
 - CHANGELOG.md
 - README.md
 

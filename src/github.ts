@@ -101,8 +101,6 @@ export async function search(query: string) {
           ? settings.core
           : `${settings.custom}/${clientKey}-auctionsoftware`;
 
-        localPath = settings.pathOverrides?.[clientKey] || settings.path_overrides?.[clientKey] || localPath;
-
         const db_identifying_octet = env.DB_IP_ADDR.split('.')[2]; // TODO: find a better way to automatically determine cluster
         const cluster = db_identifying_octet.startsWith('11') ? Number(db_identifying_octet.slice(-1)) + 1 : undefined;
 
