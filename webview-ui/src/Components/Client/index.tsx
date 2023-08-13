@@ -39,6 +39,20 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
             )}
           </span>
         </summary>
+        <div class="links">
+          {!!client?.links?.length && <>
+            <h4 class="heading">Links:</h4>
+            {client.links.map((link: any) => (
+              <vscode-link
+                class="link"
+                href={link.url}
+              >
+                <span class="codicon codicon-link-external"></span>
+                <span class="text">{link.text}</span>
+              </vscode-link>
+            ))}
+          </>}
+        </div>
         <vscode-data-grid class="details-grid" generate-header="default" aria-label="Details">
           <vscode-data-grid-row row-type="header">
             <vscode-data-grid-cell cell-type="columnheader" grid-column="1">Field</vscode-data-grid-cell>

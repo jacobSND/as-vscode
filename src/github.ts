@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { Octokit } from "@octokit/rest";
+import { getOverrides } from './utilities/overrides';
 
 const GITHUB_AUTH_PROVIDER_ID = 'github';
 const SCOPES = ['user:email', 'repo'];
@@ -79,11 +80,6 @@ export async function search(query: string) {
   const results: any[] = [];
   try {
     const settings = vscode.workspace.getConfiguration('as2.clients');
-    const overrides = {
-      ...settings.overrides,
-      mark: { cluster: 'Marknet', sshUser: 'snd_root', ...settings?.overrides?.mark },
-      jmab: { cluster: 'JMA', ...settings?.overrides?.jmab },
-    };
 
     const gh = await getGh();
     const searchResults = await gh.request('GET /search/code', {
@@ -92,9 +88,9 @@ export async function search(query: string) {
       },
       q: `${query}+repo:${OWNER}/${REPO}`,
     });
-    for (const client of searchResults.data.items || []) {
-      const [_, type, key] = client.path.match(/^(client|custom|disabled_client)_env\/(.+)\.env$/i) || [];
-      const env = key ? await getEnv(client.path) : null;
+    for (const result of searchResults.data.items || []) {
+      const [_, type, key] = result.path.match(/^(client|custom|disabled_client)_env\/(.+)\.env$/i) || [];
+      const env = key ? await getEnv(result.path) : null;
       if (env) {
         const clientKey = env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY;
         let localPath: string = type === 'client'
@@ -104,12 +100,12 @@ export async function search(query: string) {
         const db_identifying_octet = env.DB_IP_ADDR.split('.')[2]; // TODO: find a better way to automatically determine cluster
         const cluster = db_identifying_octet.startsWith('11') ? Number(db_identifying_octet.slice(-1)) + 1 : undefined;
 
-        results.push({
+        const client = {
           ...env,
-          label: key || client.path || '',
+          label: key || result.path || '',
           key: key.toLowerCase(),
           name: env.CLIENT_NAME,
-          githubUrl: client.html_url,
+          githubUrl: result.html_url,
           type: type === 'client' ? 'core' : type,
           cluster,
           domain: `${env.APP_DEFAULT_PROTOCOL || 'https'}://${env.APP_HOSTNAME}`,
@@ -118,8 +114,11 @@ export async function search(query: string) {
             ? 'https://github.com/AuctionSoft/auctionsoftware'
             : `https://github.com/AuctionSoft/${env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY}-auctionsoftware`,
           localPath,
-          ...overrides?.[clientKey],
-        });
+        };
+
+        const overrides = getOverrides(settings.overrides, client);
+
+        results.push({ ...client, ...overrides });
       }
     }
   } catch (e: any) {
