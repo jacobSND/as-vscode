@@ -4,13 +4,17 @@
   "publisher": "JacobSND",
   "description": "Auctioneer Software",
   "icon": "resources/AS.png",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/AuctionSoft"
   },
   "engines": {
     "vscode": "^1.72.0"
+  },
+  "galleryBanner": {
+    "color": "#131245",
+    "theme": "dark"
   },
   "categories": [
     "Other"
