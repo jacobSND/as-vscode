@@ -4,6 +4,12 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 ## [Unreleased]
 
+## [1.2.2] - 2023-08-14
+
+### Fixed
+
+- 🐛 Some postMessage calls were failing due to nested proxies
+
 ## [1.2.1] - 2023-08-13
 
 ### Fixed
@@ -91,7 +97,8 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 - Initial release
 
-[unreleased]: https://github.com/jacobSND/as-vscode/compare/v1.2.1...HEAD
+[unreleased]: https://github.com/jacobSND/as-vscode/compare/v1.2.2...HEAD
+[1.2.2]: https://github.com/jacobSND/as-vscode/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/jacobSND/as-vscode/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/jacobSND/as-vscode/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/jacobSND/as-vscode/compare/v1.0.6...v1.1.0

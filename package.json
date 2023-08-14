@@ -4,7 +4,7 @@
   "publisher": "JacobSND",
   "description": "Auctioneer Software",
   "icon": "resources/AS.png",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/AuctionSoft"
