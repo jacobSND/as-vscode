@@ -63,7 +63,7 @@ export function getOverrides(settings: any, client: any) {
 
   const defaultOverrides = merged?.["*"];
   const dbOverrides = merged?.[client.db];
-  const clientOverrides = merged?.[client.IMAGE_KEY];
+  const clientOverrides = merged?.[client.IMAGE_KEY || client.APP_NAME || client.WEBSITE_KEY];
 
   return mergeWith(clientOverrides, dbOverrides, defaultOverrides, (objValue, srcValue) => {
     if (!Array.isArray(objValue)) return undefined;
