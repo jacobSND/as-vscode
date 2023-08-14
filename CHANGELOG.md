@@ -4,6 +4,12 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 ## [Unreleased]
 
+## [1.2.1] - 2023-08-13
+
+### Fixed
+
+- 🐛 IMAGE_KEY fallback bug introduced by the override changes
+
 ## [1.2.0] - 2023-08-13
 
 - Client/Cluster links
@@ -85,7 +91,8 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 - Initial release
 
-[unreleased]: https://github.com/jacobSND/as-vscode/compare/v1.2.0...HEAD
+[unreleased]: https://github.com/jacobSND/as-vscode/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/jacobSND/as-vscode/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/jacobSND/as-vscode/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/jacobSND/as-vscode/compare/v1.0.6...v1.1.0
 [1.0.6]: https://github.com/jacobSND/as-vscode/compare/v1.0.5...v1.0.6
