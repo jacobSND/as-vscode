@@ -1,0 +1,24 @@
+# This workflow will build and publish a VS Code Extension to Visual Studio Marketplace when a release is created
+
+name: Visual Studio Marketplace Publish
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm run install:all
+      - run: npm run build:webview
+      - run: npm run compile
+      - name: Publish to Visual Studio Marketplace
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
+          registryUrl: https://marketplace.visualstudio.com
