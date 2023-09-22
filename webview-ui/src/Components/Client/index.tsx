@@ -20,12 +20,9 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
           </div>
         </h2>
         <div class="subtitle">
-          <vscode-button
-            title="Copy URL"
-            appearance="icon"
-            class="domain"
-            onClick={() => sendMessage({ command: 'copy', value: client.domain })}
-          ><span class="codicon codicon-globe"></span></vscode-button>
+          <vscode-link class="admin-domain" href={client.domain + client.APP_ADMIN_PATH}>
+            <span class="codicon codicon-globe"></span>
+          </vscode-link>
           <vscode-link class="domain" href={client.domain}>{client.domain.replace('https://', '')}</vscode-link>
         </div>
       </div>
@@ -86,6 +83,27 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
         <vscode-link class="db" title="Connect to DB" onClick={() => sendMessage({ command: 'connectDb', value: unwrap(client) })}>
           <span class="codicon codicon-database"></span>
         </vscode-link>
+        {!!client?.links?.length && <>
+          <div class="links">
+            <vscode-button
+              title="More Actions"
+              appearance="icon"
+            >
+              <span class="codicon codicon-chevron-down"></span>
+            </vscode-button>
+            <div class="links-container">
+              {client.links.map((link: any) => (
+                <vscode-link
+                  class="link"
+                  href={link.url}
+                >
+                  <span class="text">{link.text}</span>
+                  <span class="codicon codicon-link-external"></span>
+                </vscode-link>
+              ))}
+            </div>
+          </div>
+        </>}
       </div>
     </div>
   );

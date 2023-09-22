@@ -33,6 +33,10 @@
     .subtitle {
       display: flex;
       align-items: center;
+
+      .admin-domain {
+        color: inherit;
+      }
     }
   }
   details summary {
@@ -52,27 +56,6 @@
       color: var(--button-primary-foreground);
     }
   }
-  .links {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    padding: 0.5rem;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-
-    .heading {
-      margin-bottom: 0.25rem;
-      width: 100%;
-    }
-
-    .link {
-      flex-basis: 25%;
-      .codicon {
-        margin: 0 0.25rem;
-        font-size: 0.75rem;
-      }
-    }
-  }
   .details-grid {
     vscode-data-grid-row {
       font-size: 10px;
@@ -89,6 +72,40 @@
       color: var(--vscode-editor-foreground, #abb2bf);
       width: 1em;
       height: 1em;
+    }
+
+    .links {
+      position: relative;
+
+      .links-container {
+        display: none;
+        flex-direction: column;
+        align-items: flex-end;
+        position: absolute;
+        top: 30px;
+        right: -15px;
+        min-width: 100vw;
+        z-index: 1;
+        background-color: var(--vscode-list-activeSelectionBackground,  transparent);
+        padding: 10px;
+
+        .link {
+          font-size: 1rem;
+          padding: 0.25rem 0.5rem;
+
+          .codicon {
+            margin: 0 0.25rem;
+            font-size: 0.75rem;
+          }
+        }
+
+      }
+
+      &:hover {
+        .links-container {
+          display: flex;
+        }
+      }
     }
   }
   .details {

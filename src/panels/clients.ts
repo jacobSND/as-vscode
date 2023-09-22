@@ -13,7 +13,7 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
   async init() {
     let folder = vscode.workspace.workspaceFolders?.[0].uri.path.split('/').pop();
     if (folder?.includes('-auctionsoftware')) {
-      const results = await ghSearch(`WEBSITE_KEY="${folder.split('-auctionsoftware')?.[0]}`);
+      const results = await ghSearch(`WEBSITE_KEY="${folder.split('-auctionsoftware')?.[0]}-`);
       if (results?.length) {
         return this?._view?.webview?.postMessage({ action: 'search', value: results });
       }
