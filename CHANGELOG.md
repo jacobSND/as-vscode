@@ -4,7 +4,7 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 ## [Unreleased]
 
-## [1.2.3] - 2023-09-22
+## [1.2.4] - 2023-09-24
 
 ### Changed
 
@@ -103,8 +103,8 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 - Initial release
 
-[unreleased]: https://github.com/jacobSND/as-vscode/compare/v1.2.3...HEAD
-[1.2.3]: https://github.com/jacobSND/as-vscode/compare/v1.2.2...v1.2.3
+[unreleased]: https://github.com/jacobSND/as-vscode/compare/v1.2.4...HEAD
+[1.2.4]: https://github.com/jacobSND/as-vscode/compare/v1.2.2...v1.2.4
 [1.2.2]: https://github.com/jacobSND/as-vscode/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/jacobSND/as-vscode/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/jacobSND/as-vscode/compare/v1.1.0...v1.2.0
