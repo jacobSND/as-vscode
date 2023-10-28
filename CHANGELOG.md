@@ -4,6 +4,11 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 ## [Unreleased]
 
+### Fixed
+
+- 🐛 Better folder search on window load
+
+
 ## [1.2.4] - 2023-09-24
 
 ### Changed
