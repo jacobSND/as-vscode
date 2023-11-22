@@ -4,7 +4,7 @@ import { init as initPanels } from "./panels";
 import { init } from "./utilities/init";
 
 export async function activate(context: vscode.ExtensionContext) {
-	init();
+	init(context);
 	context.subscriptions.push(vscode.commands.registerCommand('as2.settings', () => vscode.commands.executeCommand('workbench.action.openSettings', 'Auctioneer Software')));
 	context.subscriptions.push(vscode.commands.registerCommand('as2.start', () => runTerminalCommand(`pm2 status; rush update; rush build && rush start`, { name: `AS2 Project Start`, ttl: 0 })));
 	context.subscriptions.push(vscode.commands.registerCommand('as2.logs', () => runTerminalCommand(`pm2 logs`, { name: `AS2 Logs` })));

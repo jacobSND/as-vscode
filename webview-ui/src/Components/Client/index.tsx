@@ -1,10 +1,14 @@
 import { Component } from "solid-js";
+import { useKeyDownList } from "@solid-primitives/keyboard";
 import VscodeIcon from '../../assets/vscode.svg?component-solid';
 import GitDevIcon from '../../assets/github-dev.svg?component-solid';
 import './style.scss';
 import { unwrap } from "solid-js/store";
 
 export const Client: Component<any> = ({ client, sendMessage }) => {
+  const pressedKeys = useKeyDownList();
+  const ctrl = () => pressedKeys().includes('CONTROL');
+
   return (
     <div id={`client-${client.key}`} class="client">
       <div class="main">
@@ -23,7 +27,12 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
           <vscode-link class="admin-domain" href={client.domain + client.APP_ADMIN_PATH}>
             <span class="codicon codicon-globe"></span>
           </vscode-link>
-          <vscode-link class="domain" href={client.domain}>{client.domain.replace('https://', '')}</vscode-link>
+          <vscode-link
+            class="domain"
+            href={client.domain + (ctrl() ? client.APP_ADMIN_PATH : '')}
+          >
+            {client.domain.replace('https://', '') + (ctrl() ? client.APP_ADMIN_PATH : '')}
+          </vscode-link>
         </div>
       </div>
       <details>
