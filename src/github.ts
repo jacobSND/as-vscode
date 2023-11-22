@@ -117,7 +117,12 @@ export async function search(query: string) {
         };
 
         const overrides = getOverrides(settings.overrides, client);
-
+        if (client.type === 'custom') {
+          const jenkinsLink = overrides?.links?.find((link: any) => link.text === 'Jenkins');
+          if (jenkinsLink) {
+            jenkinsLink.url = jenkinsLink.url + `job/${client.key}-auctionsoftware/`;
+          }
+        }
         results.push({ ...client, ...overrides });
       }
     }

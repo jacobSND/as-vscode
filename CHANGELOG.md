@@ -18,6 +18,7 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 ### Changed
 
 - Updated links
+- Jenkins now directly links to client
 
 ## [1.2.4](https://github.com/jacobSND/as-vscode/compare/v1.2.2...v1.2.4) - 2023-09-24
 
