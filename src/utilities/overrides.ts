@@ -27,11 +27,20 @@ const defaults = {
     ],
   },
   "10.5.111.101": { // C2 DBO2
+    sshUser: 'snd_root',
     links: [
       { text: 'DB CPU', url: 'https://10.0.30.208/chart.svg?type=graph&graphid=0&width=1400&height=900&username=ReadOnly&password=OnlyRead1&graphstyling=baseFontSize%3D%2710%27%20showLegend%3D%271%27&tooltexts=1&refreshable=true&columns=datetime%2Cvalue_%2Ccoverage&_=1683635176439&id=10735&myid=16836371735043581025&hide=-4,3,5,6,7,8,9,10,11,12,13,14,15' },
     ],
   },
   "10.5.112.100": { // C3 DB01
+    links: [
+      { text: 'Graphs', url: 'http://10.5.112.175:3000/d/nginx/nginx-ingress-controller?orgId=1&refresh=30s' },
+      { text: 'Logs', url: 'http://10.5.112.138:9000/' },
+      { text: 'DB CPU', url: 'https://10.0.30.208/chart.svg?type=graph&graphid=0&width=1400&height=900&username=ReadOnly&password=OnlyRead1&graphstyling=baseFontSize%3D%2710%27%20showLegend%3D%271%27&tooltexts=1&refreshable=true&columns=datetime%2Cvalue_%2Ccoverage&_=1629729599713&id=9778&myid=16297296456972450894&hide=-4,3,5,6,7,8,9,10,11,12,13,14,15,16' },
+    ],
+  },
+  "10.5.112.101": { // C3 DB02
+    sshUser: 'snd_root',
     links: [
       { text: 'Graphs', url: 'http://10.5.112.175:3000/d/nginx/nginx-ingress-controller?orgId=1&refresh=30s' },
       { text: 'Logs', url: 'http://10.5.112.138:9000/' },
@@ -51,6 +60,7 @@ const defaults = {
     ],
   },
   "10.5.114.100": { // C5 DB01
+    sshUser: 'snd_root',
     links: [
       { text: 'Graphs', url: 'http://10.5.114.221:3000/d/nginx/nginx-ingress-controller-kub-c5-2023?orgId=1&refresh=30s' },
       { text: 'Logs', url: 'http://10.5.114.209:9000/search?q=&rangetype=relative&relative=300' },

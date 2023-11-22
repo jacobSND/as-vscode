@@ -13,6 +13,7 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 ### Fixed
 
 - 🐛 Better folder search on window load
+- 🐛 Correct SSH user for DB servers
 
 ### Changed
 
