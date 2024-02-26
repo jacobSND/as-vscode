@@ -4,10 +4,10 @@ import * as semver from 'semver';
 export async function init(context: vscode.ExtensionContext) {
   const version = context.extension.packageJSON.version;
   const prevVersion = await context.secrets.get('version') || "0.0.0";
-  if (semver.gt('1.2.5', prevVersion)) {
-    vscode.window.showInformationMessage('Tip: CTRL + click on client domains to access the admin URL', 'Changelog', 'Dismiss').then((value) => {
-      if (value === 'Changelog') {
-        vscode.commands.executeCommand('markdown.showPreview', vscode.Uri.file(`${__dirname}/../CHANGELOG.md`));
+  if (semver.gte('0.0.0', prevVersion)) {
+    vscode.window.showInformationMessage('View the Auctioneer Software "Getting Started" guide?', 'View Guide', 'Dismiss').then((value) => {
+      if (value === 'View Guide') {
+        vscode.env.openExternal(vscode.Uri.parse("https://github.com/AuctionSoft/auctionsoftware/wiki"));
       }
     });
   }
