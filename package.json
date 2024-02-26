@@ -4,7 +4,7 @@
   "publisher": "JacobSND",
   "description": "Auctioneer Software",
   "icon": "resources/AS.png",
-  "version": "1.2.5",
+  "version": "1.3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/AuctionSoft"
@@ -20,12 +20,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:as2.clients.search",
-    "onCommand:as2.coreUpdate",
-    "onCommand:as2.devInit",
-    "onCommand:as2.showClients",
-    "onCommand:as2.start",
-    "onView:as2-clients"
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
