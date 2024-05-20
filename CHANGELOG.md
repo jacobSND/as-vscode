@@ -2,7 +2,13 @@
 
 All notable changes to the "Auctioneer Software" extension will be documented in this file.
 
-## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.3.0...HEAD)
+## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.3.1...HEAD)
+
+## [1.3.1](https://github.com/jacobSND/as-vscode/compare/v1.3.0...v1.3.1) - 2024-05-20
+
+### Changed
+  - More granular control for the init ignore settings
+  - Switched default `sshUser` to `snd_root`
 
 ## [1.3.0](https://github.com/jacobSND/as-vscode/compare/v1.2.5...v1.3.0) - 2024-02-26
 
