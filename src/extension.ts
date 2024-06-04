@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { clientSearch, runTerminalCommand } from "./commands";
 import { init as initPanels } from "./panels";
-import { init } from "./utilities/init";
+import { init } from "./init";
 
 export async function activate(context: vscode.ExtensionContext) {
 	init(context);
