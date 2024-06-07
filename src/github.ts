@@ -116,7 +116,7 @@ export async function search(query: string) {
           localPath,
         };
 
-        const overrides = getOverrides(settings.overrides, client);
+        const overrides = await getOverrides(settings.overrides, client);
         if (client.type === 'custom') {
           const jenkinsLink = overrides?.links?.find((link: any) => link.text === 'Jenkins');
           if (jenkinsLink) {
