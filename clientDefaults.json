@@ -84,7 +84,7 @@
     "links": [
       {
         "text": "Graphs",
-        "url": "http://10.5.112.175:3000/d/nginx/nginx-ingress-controller?orgId=1&refresh=30s"
+        "url": "http://10.5.112.165:3000/d/nginx/nginx-ingress-controller-kub-c3-2024?orgId=1&refresh=30s"
       },
       {
         "text": "Logs",
@@ -101,7 +101,7 @@
     "links": [
       {
         "text": "Graphs",
-        "url": "http://10.5.112.175:3000/d/nginx/nginx-ingress-controller?orgId=1&refresh=30s"
+        "url": "http://10.5.112.165:3000/d/nginx/nginx-ingress-controller-kub-c3-2024?orgId=1&refresh=30s"
       },
       {
         "text": "Logs",
