@@ -72,6 +72,10 @@
       color: var(--vscode-editor-foreground, #abb2bf);
       width: 1em;
       height: 1em;
+
+      &.codicon-play-circle {
+        font-size: 2.15em;
+      }
     }
 
     .links {
