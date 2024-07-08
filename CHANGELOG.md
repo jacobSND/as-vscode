@@ -2,7 +2,12 @@
 
 All notable changes to the "Auctioneer Software" extension will be documented in this file.
 
-## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.4.0...HEAD)
+## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.4.1...HEAD)
+
+## [1.4.1](https://github.com/jacobSND/as-vscode/compare/v1.4.0...v1.4.1) - 2024-07-08
+
+### Fixed
+ - 🐛 Prevent subsequent gh actions after failure
 
 ## [1.4.0](https://github.com/jacobSND/as-vscode/compare/v1.3.2...v1.4.0) - 2024-07-08
 
