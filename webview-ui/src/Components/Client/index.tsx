@@ -60,6 +60,11 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
         </vscode-data-grid>
       </details>
       <div class="actions">
+        {client.type === 'custom' && (
+          <vscode-link class="Build/Deploy" title="Build/Deploy" onClick={() => sendMessage({ command: 'buildDeploy', value: unwrap(client) })}>
+            <span class="codicon codicon-play-circle"></span>
+          </vscode-link>
+        )}
         <vscode-link class="github" title="View on Github" href={client.repo} onClick={(e: any) => {
           if (e.altKey) {
             sendMessage({ command: 'copy', value: client.repo })

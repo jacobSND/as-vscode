@@ -1,9 +1,8 @@
 import * as vscode from "vscode";
 import { getAuctions } from "../as2";
 import { openLocalProject, runTerminalCommand } from "../commands";
-import { search as ghSearch } from "../github";
+import { search as ghSearch, startWorkflow } from "../github";
 import { getUri } from "../utilities/getUri";
-// import './style.scss';
 
 export class ClientsPanel implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
@@ -52,6 +51,51 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
         }
         case "openProject": {
           return openLocalProject(value);
+        }
+        case "buildDeploy": {
+          return vscode.window.showQuickPick([
+            { label: 'Core Update', description: 'Update the core files', value: 'update' },
+            { label: 'Build', description: 'Build the project', value: 'build' },
+            // TODO: { label: 'Deploy', description: 'Deploy the project', value: 'deploy' },
+          ], {
+            canPickMany: true,
+            placeHolder: '⚠️ Selected actions will run on gh actions ⚠️',
+          }).then(async (values) => {
+            if (!values) return;
+            vscode.window.withProgress({
+              location: vscode.ProgressLocation.Notification,
+              title: `${value.key} Progress`,
+              cancellable: true,
+            }, async (progress, cancelationToken) => {
+              cancelationToken.onCancellationRequested(() => vscode.window.showInformationMessage('Polling cancelled, any running actions will continue to run unless cancelled manually'));
+
+              const incrementSize = 100 / (values.length + 1);
+              progress.report({ increment: 0 });
+
+              try {
+                if (values.some(value => value.value === 'update')) {
+                  progress.report({ increment: incrementSize, message: "Running Core update..." });
+                  await startWorkflow(value.key, 'update');
+                }
+
+                if (values.some(value => value.value === 'build')) {
+                  progress.report({ increment: incrementSize, message: "Running Build..." });
+                  await startWorkflow(value.key, 'deploy');
+                }
+
+                if (values.some(value => value.value === 'deploy')) {
+                  progress.report({ increment: incrementSize, message: "Running Deploy..." });
+                  // TODO: jenkins deploy
+                }
+
+                vscode.window.showInformationMessage('Actions completed!');
+              } catch (error) {
+                vscode.window.showErrorMessage(`Error running actions: ${error instanceof Error ? error.message : 'Unknown error'}`);
+              } finally {
+                progress.report({ increment: 100 });
+              }
+            });
+          });
         }
         case "auctions": {
           const auctions = await getAuctions(value);

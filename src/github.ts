@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
 import { Octokit } from "@octokit/rest";
 import { getOverrides } from './utilities/overrides';
+import { poll } from './utilities/poll';
 
 const GITHUB_AUTH_PROVIDER_ID = 'github';
-const SCOPES = ['user:email', 'repo'];
+const SCOPES = ['user:email', 'repo', 'workflow'];
 const BRANCH = 'master';
 export const OWNER = 'AuctionSoft';
 export const REPO = 'as2-clients';
@@ -130,4 +131,75 @@ export async function search(query: string) {
     vscode.window.showWarningMessage(`Github Error: ${e?.message || 'Unknown error'}`);
   }
   return results;
+}
+
+export async function startWorkflow(client_key: string, type: 'update' | 'deploy', cancellationToken?: vscode.CancellationToken) {
+  const gh = await getGh();
+  const commonRequestParams = {
+    owner: OWNER,
+    repo: `${client_key}-auctionsoftware`,
+    workflow_id: `${type}.yml`,
+  };
+  const timeouts = {
+    start: 30 * 1000, // 30 seconds
+    update: 5 * 60 * 1000, // 5 minutes
+    deploy: 20 * 60 * 1000, // 20 minutes
+  };
+
+  let info_link = `https://github.com/${OWNER}/${client_key}-auctionsoftware/actions`;
+  const onInfoClick = (clicked?: string) => !clicked ? undefined : vscode.env.openExternal(vscode.Uri.parse(info_link));
+
+  // check for any currently active runs
+  const { data: { workflow_runs: activeRuns } } = await gh.actions.listWorkflowRuns({
+    ...commonRequestParams,
+    status: 'in_progress',
+  });
+
+  if (activeRuns.length) {
+    info_link = info_link + `/runs/${activeRuns[0].id}`;
+    vscode.window.showWarningMessage(`There is already an active ${type} workflow`, 'View').then(onInfoClick);
+    throw new Error;
+  }
+
+  // Start the workflow
+  await gh.actions.createWorkflowDispatch({
+    ...commonRequestParams,
+    ref: BRANCH,
+  });
+
+  // Get the ID of the pending workflow
+  const pendingWorkflowID = await poll(async () => {
+    const { data: run } = await gh.actions.listWorkflowRuns({
+      ...commonRequestParams,
+      status: 'in_progress',
+    });
+    return run.workflow_runs[0]?.id;
+  }, { timeout: timeouts.start, interval: timeouts.start / 5, cancellationToken });
+
+  if (!pendingWorkflowID) {
+    vscode.window.showWarningMessage(`Unable to find a pending ${type} workflow...`, 'View').then(onInfoClick);
+    throw new Error;
+  }
+
+  // Wait for the workflow to complete
+  const completedWorkflow = await poll(async () => {
+    const { data: run } = await gh.actions.getWorkflowRun({
+      ...commonRequestParams,
+      run_id: pendingWorkflowID,
+    });
+    return run.status === 'completed' ? run : undefined;
+  }, { timeout: timeouts[type], cancellationToken });
+
+  if (!completedWorkflow) {
+    info_link = info_link + `/runs/${pendingWorkflowID}`;
+    vscode.window.showWarningMessage(`Timeout waiting for workflow run ${pendingWorkflowID} to complete`, 'View').then(onInfoClick);
+    throw new Error;
+  } else {
+    info_link = completedWorkflow.html_url;
+    if (completedWorkflow.conclusion !== 'success') {
+      vscode.window.showErrorMessage(`${type} workflow ${completedWorkflow.conclusion}`, 'View').then(onInfoClick);
+    } else {
+      vscode.window.showInformationMessage(`Completed ${type} workflow`, 'View').then(onInfoClick);
+    }
+  }
 }
