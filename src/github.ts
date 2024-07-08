@@ -198,6 +198,7 @@ export async function startWorkflow(client_key: string, type: 'update' | 'deploy
     info_link = completedWorkflow.html_url;
     if (completedWorkflow.conclusion !== 'success') {
       vscode.window.showErrorMessage(`${type} workflow ${completedWorkflow.conclusion}`, 'View').then(onInfoClick);
+      throw new Error;
     } else {
       vscode.window.showInformationMessage(`Completed ${type} workflow`, 'View').then(onInfoClick);
     }
