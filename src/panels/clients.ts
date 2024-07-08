@@ -67,7 +67,7 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
               title: `${value.key} Progress`,
               cancellable: true,
             }, async (progress, cancelationToken) => {
-              cancelationToken.onCancellationRequested(() => console.log("User canceled the long running operation"));
+              cancelationToken.onCancellationRequested(() => vscode.window.showInformationMessage('Polling cancelled, any running actions will continue to run unless cancelled manually'));
 
               const incrementSize = 100 / (values.length + 1);
               progress.report({ increment: 0 });
