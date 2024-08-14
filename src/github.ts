@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { Octokit } from "@octokit/rest";
 import { getOverrides } from './utilities/overrides';
 import { poll } from './utilities/poll';
+import { ErrorWithOptions } from './utilities/error';
 
 const GITHUB_AUTH_PROVIDER_ID = 'github';
 const SCOPES = ['user:email', 'repo', 'workflow'];
@@ -133,6 +134,10 @@ export async function search(query: string) {
   return results;
 }
 
+export function actionsLink(client_key: string) {
+  return `https://github.com/${OWNER}/${client_key}-auctionsoftware/actions`;
+}
+
 export async function startWorkflow(client_key: string, type: 'update' | 'deploy', cancellationToken?: vscode.CancellationToken) {
   const gh = await getGh();
   const commonRequestParams = {
@@ -146,8 +151,7 @@ export async function startWorkflow(client_key: string, type: 'update' | 'deploy
     deploy: 20 * 60 * 1000, // 20 minutes
   };
 
-  let info_link = `https://github.com/${OWNER}/${client_key}-auctionsoftware/actions`;
-  const onInfoClick = (clicked?: string) => !clicked ? undefined : vscode.env.openExternal(vscode.Uri.parse(info_link));
+  const actions_link = actionsLink(client_key);
 
   // check for any currently active runs
   const { data: { workflow_runs: activeRuns } } = await gh.actions.listWorkflowRuns({
@@ -156,9 +160,7 @@ export async function startWorkflow(client_key: string, type: 'update' | 'deploy
   });
 
   if (activeRuns.length) {
-    info_link = info_link + `/runs/${activeRuns[0].id}`;
-    vscode.window.showWarningMessage(`There is already an active ${type} workflow`, 'View').then(onInfoClick);
-    throw new Error;
+    throw new ErrorWithOptions(`There is already an active ${type} workflow`, { link: actions_link + `/runs/${activeRuns[0].id}` });
   }
 
   // Start the workflow
@@ -177,8 +179,7 @@ export async function startWorkflow(client_key: string, type: 'update' | 'deploy
   }, { timeout: timeouts.start, interval: timeouts.start / 5, cancellationToken });
 
   if (!pendingWorkflowID) {
-    vscode.window.showWarningMessage(`Unable to find a pending ${type} workflow...`, 'View').then(onInfoClick);
-    throw new Error;
+    throw new ErrorWithOptions(`Unable to find a pending ${type} workflow...`, { link: actions_link });
   }
 
   // Wait for the workflow to complete
@@ -191,16 +192,10 @@ export async function startWorkflow(client_key: string, type: 'update' | 'deploy
   }, { timeout: timeouts[type], cancellationToken });
 
   if (!completedWorkflow) {
-    info_link = info_link + `/runs/${pendingWorkflowID}`;
-    vscode.window.showWarningMessage(`Timeout waiting for workflow run ${pendingWorkflowID} to complete`, 'View').then(onInfoClick);
-    throw new Error;
+    throw new ErrorWithOptions(`Timeout waiting for workflow run ${pendingWorkflowID} to complete`, { link: actions_link + `/runs/${pendingWorkflowID}` });
   } else {
-    info_link = completedWorkflow.html_url;
     if (completedWorkflow.conclusion !== 'success') {
-      vscode.window.showErrorMessage(`${type} workflow ${completedWorkflow.conclusion}`, 'View').then(onInfoClick);
-      throw new Error;
-    } else {
-      vscode.window.showInformationMessage(`Completed ${type} workflow`, 'View').then(onInfoClick);
+      throw new ErrorWithOptions(`${type} workflow ${completedWorkflow.conclusion}`, { link: completedWorkflow.html_url });
     }
   }
 }

@@ -20,7 +20,7 @@ async function getDefaults(): Promise<Object> {
       defaults = JSON.parse(fs.readFileSync(localFilePath, 'utf8'));
     }
   }
-  return defaults || {};
+  return structuredClone(defaults || {});
 }
 
 const merge = (destination: Object, ...sources: Object[]) => mergeWith(destination, ...sources, (objValue: any, srcValue: any) => {

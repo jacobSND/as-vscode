@@ -1,8 +1,10 @@
 import * as vscode from "vscode";
 import { getAuctions } from "../as2";
 import { openLocalProject, runTerminalCommand } from "../commands";
-import { search as ghSearch, startWorkflow } from "../github";
+import { actionsLink, search as ghSearch, startWorkflow } from "../github";
 import { getUri } from "../utilities/getUri";
+import { ErrorWithOptions } from "../utilities/error";
+import { stepper } from "../utilities/stepper";
 
 export class ClientsPanel implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
@@ -53,10 +55,11 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
           return openLocalProject(value);
         }
         case "buildDeploy": {
+          const client = value;
           return vscode.window.showQuickPick([
             { label: 'Core Update', description: 'Update the core files', value: 'update' },
             { label: 'Build', description: 'Build the project', value: 'build' },
-            // TODO: { label: 'Deploy', description: 'Deploy the project', value: 'deploy' },
+            { label: 'Deploy', description: 'Deploy the project', value: 'deploy' },
           ], {
             canPickMany: true,
             placeHolder: '⚠️ Selected actions will run on gh actions ⚠️',
@@ -64,33 +67,57 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
             if (!values) return;
             vscode.window.withProgress({
               location: vscode.ProgressLocation.Notification,
-              title: `${value.key} Progress`,
+              title: client.key.toUpperCase(),
               cancellable: true,
             }, async (progress, cancelationToken) => {
-              cancelationToken.onCancellationRequested(() => vscode.window.showInformationMessage('Polling cancelled, any running actions will continue to run unless cancelled manually'));
-
-              const incrementSize = 100 / (values.length + 1);
+              const cancelationMessage = 'Polling cancelled, any running actions will continue to run unless cancelled manually';
+              const options: { label: string, onClick: () => void }[] = [{
+                label: 'View',
+                onClick: () => vscode.env.openExternal(vscode.Uri.parse(actionsLink(client.key))),
+              }];
+              const onClick = (clicked?: string) => {
+                const option = options.find(option => option.label === clicked);
+                option?.onClick();
+              };
+              cancelationToken.onCancellationRequested(() => vscode.window.showInformationMessage(cancelationMessage, ...options.map(({ label }) => label)).then(onClick));
+              const { step, total } = stepper({ total: values.length });
+              const incrementPercent = 100 / total + 1;
               progress.report({ increment: 0 });
 
               try {
                 if (values.some(value => value.value === 'update')) {
-                  progress.report({ increment: incrementSize, message: "Running Core update..." });
-                  await startWorkflow(value.key, 'update');
+                  progress.report({ increment: incrementPercent, message: `(${step()}/${total}) Running Core update...` });
+                  await startWorkflow(client.key, 'update');
                 }
 
                 if (values.some(value => value.value === 'build')) {
-                  progress.report({ increment: incrementSize, message: "Running Build..." });
-                  await startWorkflow(value.key, 'deploy');
+                  progress.report({ increment: incrementPercent, message: `(${step()}/${total}) Running Build...` });
+                  await startWorkflow(client.key, 'deploy');
                 }
 
                 if (values.some(value => value.value === 'deploy')) {
-                  progress.report({ increment: incrementSize, message: "Running Deploy..." });
-                  // TODO: jenkins deploy
+                  progress.report({ increment: incrementPercent, message: `(${step()}/${total}) Running Deploy...` });
+                  // TODO: use jenkins key to trigger deploy
+                  const jenkins_link = client.links.find((link: any) => link.text === 'Jenkins')?.url;
+                  if (jenkins_link) {
+                    options.push({
+                      label: 'Deploy',
+                      onClick: () => vscode.env.openExternal(vscode.Uri.parse(jenkins_link)),
+                    });
+                  }
                 }
 
-                vscode.window.showInformationMessage('Actions completed!');
+                vscode.window.showInformationMessage(`${client.key.toUpperCase()} completed!`, ...options.map(({ label }) => label)).then(onClick);
               } catch (error) {
-                vscode.window.showErrorMessage(`Error running actions: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                const message = error instanceof Error ? error.message : `Unknown Error running actions`;
+                const options = !(error instanceof ErrorWithOptions && error.details?.link) ? [] : [{
+                  label: 'Details',
+                  onClick: () => vscode.env.openExternal(vscode.Uri.parse(error.details?.link ?? ''))
+                }];
+                vscode.window.showErrorMessage(message, ...options.map(({ label }) => label)).then(clicked => {
+                  const option = options.find(option => option.label === clicked);
+                  option?.onClick();
+                });
               } finally {
                 progress.report({ increment: 100 });
               }
