@@ -109,11 +109,20 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
 
                 vscode.window.showInformationMessage(`${client.key.toUpperCase()} completed!`, ...options.map(({ label }) => label)).then(onClick);
               } catch (error) {
-                const message = error instanceof Error ? error.message : `Unknown Error running actions`;
-                const options = !(error instanceof ErrorWithOptions && error.details?.link) ? [] : [{
-                  label: 'Details',
-                  onClick: () => vscode.env.openExternal(vscode.Uri.parse(error.details?.link ?? ''))
-                }];
+                let message = 'Unknown Error running actions';
+                let options: { label: string; onClick: () => void }[] = [];
+
+                if (error instanceof Error) {
+                  message = error.message;
+                  if (error instanceof ErrorWithOptions && error.details?.link) {
+                    const errorLink = error.details?.link;
+                    options = [{
+                      label: 'Details',
+                      onClick: () => vscode.env.openExternal(vscode.Uri.parse(errorLink))
+                    }];
+                  }
+                }
+
                 vscode.window.showErrorMessage(message, ...options.map(({ label }) => label)).then(clicked => {
                   const option = options.find(option => option.label === clicked);
                   option?.onClick();
