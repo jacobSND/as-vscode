@@ -17,7 +17,7 @@
       },
       {
         "text": "Logs",
-        "url": "http://10.5.110.136:9000/gettingstarted"
+        "url": "http://10.5.110.204:9000/search?q=&rangetype=relative&relative=300"
       },
       {
         "text": "DB CPU",
@@ -35,7 +35,7 @@
       },
       {
         "text": "Logs",
-        "url": "http://10.5.110.136:9000/gettingstarted"
+        "url": "http://10.5.110.204:9000/search?q=&rangetype=relative&relative=300"
       },
       {
         "text": "DB CPU",
@@ -105,7 +105,7 @@
       },
       {
         "text": "Logs",
-        "url": "http://10.5.112.138:9000/"
+        "url": "http://10.5.112.124:9000/"
       },
       {
         "text": "DB CPU",
