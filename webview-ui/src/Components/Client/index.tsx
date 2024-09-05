@@ -2,6 +2,7 @@ import { Component } from "solid-js";
 import { useKeyDownList } from "@solid-primitives/keyboard";
 import VscodeIcon from '../../assets/vscode.svg?component-solid';
 import GitDevIcon from '../../assets/github-dev.svg?component-solid';
+import GavelIcon from '../../assets/gavel.svg?component-solid';
 import './style.scss';
 import { unwrap } from "solid-js/store";
 
@@ -82,6 +83,9 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
         </vscode-link>
         <vscode-link class="db" title="Connect to DB" onClick={() => sendMessage({ command: 'connectDb', value: unwrap(client) })}>
           <span class="codicon codicon-database"></span>
+        </vscode-link>
+        <vscode-link class="auctions" title="View Auctions" onClick={() => sendMessage({ command: 'auctions', value: unwrap(client) })}>
+          <GavelIcon />
         </vscode-link>
         {!!client?.links?.length && <>
           <div class="links">

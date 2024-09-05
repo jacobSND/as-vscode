@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { getAuctions } from "../as2";
+import { getAuctionsURL } from "../auctions";
 import { openLocalProject, runTerminalCommand } from "../commands";
 import { actionsLink, search as ghSearch, startWorkflow } from "../github";
 import { getUri } from "../utilities/getUri";
@@ -134,35 +134,10 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
           });
         }
         case "auctions": {
-          const auctions = await getAuctions(value);
-          const panel = vscode.window.createWebviewPanel(
-            'auctions',
-            'Auctions',
-            vscode.ViewColumn.One,
-            {},
-          );
-          panel.webview.html = /* html */`
-            <!DOCTYPE html>
-            <html lang="en">
-              <head>
-                  <meta charset="UTF-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <title>Auctions</title>
-              </head>
-              <body>
-                <table>
-                  <tr>
-                    <th>ID</th>
-                    <th>Title</th>
-                  </tr>
-                  <tr>
-                    <td>${auctions?.auctions?.[0]?.auction_id ?? ''}</td>
-                    <td>${auctions?.auctions?.[0]?.title ?? ''}</td>
-                  </tr>
-                </table>
-              </body>
-            </html>
-          `;
+          const auctionsURL = await getAuctionsURL(value);
+          if (auctionsURL) {
+            return vscode.env.openExternal(vscode.Uri.parse(auctionsURL));
+          }
         }
         default: {
           console.log({ message });

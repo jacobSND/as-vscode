@@ -149,6 +149,7 @@
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",
+    "@types/jsdom": "^21.1.7",
     "@types/lodash": "^4.14.196",
     "@types/mocha": "^10.0.0",
     "@types/node": "16.x",
@@ -169,6 +170,7 @@
     "@vscode/codicons": "0.0.20",
     "@vscode/webview-ui-toolkit": "^1.2.0",
     "axios": "^1.2.2",
+    "jsdom": "^25.0.0",
     "lodash": "^4.17.21"
   }
 }
