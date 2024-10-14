@@ -80,7 +80,6 @@
   },
   "10.5.112.100": {
     "identifier": "C3 DB01",
-    "sshUser": "root",
     "links": [
       {
         "text": "Graphs",
