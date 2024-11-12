@@ -45,7 +45,6 @@
   },
   "10.5.111.100": {
     "identifier": "C2 DB01",
-    "sshUser": "root",
     "links": [
       {
         "text": "Graphs",
