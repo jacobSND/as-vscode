@@ -9,7 +9,6 @@
   },
   "10.5.110.100": {
     "identifier": "C1 DB01",
-    "sshUser": "root",
     "links": [
       {
         "text": "Graphs",
@@ -27,7 +26,6 @@
   },
   "10.5.110.101": {
     "identifier": "C1 DB02",
-    "sshUser": "root",
     "links": [
       {
         "text": "Graphs",
