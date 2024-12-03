@@ -22,7 +22,7 @@ export async function runTerminalCommand(command: string, { name, ttl }: Termina
 export function openLocalProject({ localPath, ...client }: any) {
   localPath = localPath.replace(/^\~\//, os.homedir() + '/');
   if (fs.existsSync(localPath)) {
-    runTerminalCommand(`code ${localPath}`, { ttl: 0 });
+    vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(localPath), true);
   } else {
     const options = [
       { label: 'Clone Locally', onClick: () => runTerminalCommand(`git clone ${client.repo} ${localPath} && code ${localPath}`, { ttl: 0 }) },
