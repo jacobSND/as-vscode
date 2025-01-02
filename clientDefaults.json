@@ -111,7 +111,6 @@
   },
   "10.5.113.100": {
     "identifier": "C4 DB01",
-    "sshUser": "root",
     "links": [
       {
         "text": "Graphs",
@@ -129,7 +128,6 @@
   },
   "10.5.113.101": {
     "identifier": "C4 DB02",
-    "sshUser": "root",
     "links": [
       {
         "text": "Graphs",
