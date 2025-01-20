@@ -70,10 +70,11 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
               title: client.key.toUpperCase(),
               cancellable: true,
             }, async (progress, cancelationToken) => {
+              const actions_link = actionsLink(client.key);
               const cancelationMessage = 'Polling cancelled, any running actions will continue to run unless cancelled manually';
               const options: { label: string, onClick: () => void }[] = [{
                 label: 'View',
-                onClick: () => vscode.env.openExternal(vscode.Uri.parse(actionsLink(client.key))),
+                onClick: () => vscode.env.openExternal(vscode.Uri.parse(actions_link)),
               }];
               const onClick = (clicked?: string) => {
                 const option = options.find(option => option.label === clicked);
@@ -86,17 +87,17 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
 
               try {
                 if (values.some(value => value.value === 'update')) {
-                  progress.report({ increment: incrementPercent, message: `(${step()}/${total}) Running Core update...` });
+                  progress.report({ increment: incrementPercent, message: `(${step()}/${total}) Running [Core update](${actions_link})...` });
                   await startWorkflow(client.key, 'update');
                 }
 
                 if (values.some(value => value.value === 'build')) {
-                  progress.report({ increment: incrementPercent, message: `(${step()}/${total}) Running Build...` });
+                  progress.report({ increment: incrementPercent, message: `(${step()}/${total}) Running [Build](${actions_link})...` });
                   await startWorkflow(client.key, 'deploy');
                 }
 
                 if (values.some(value => value.value === 'deploy')) {
-                  progress.report({ increment: incrementPercent, message: `(${step()}/${total}) Running Deploy...` });
+                  progress.report({ increment: incrementPercent, message: `(${step()}/${total}) Running [Deploy](${actions_link})...` });
                   // TODO: use jenkins key to trigger deploy
                   const jenkins_link = client.links.find((link: any) => link.text === 'Jenkins')?.url;
                   if (jenkins_link) {
