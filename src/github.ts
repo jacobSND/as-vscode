@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
-import { Octokit } from "@octokit/rest";
+import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 import { getOverrides } from './utilities/overrides';
 import { poll } from './utilities/poll';
 import { ErrorWithOptions } from './utilities/error';
 
-const GITHUB_AUTH_PROVIDER_ID = 'github';
+const AUTH_PROVIDER = 'github';
 const SCOPES = ['user:email', 'repo', 'workflow'];
 const BRANCH = 'master';
 export const OWNER = 'AuctionSoft';
@@ -15,23 +15,21 @@ let subscription: any = undefined;
 function registerListeners() {
   if (!subscription) { // handle login/out
     subscription = vscode.authentication.onDidChangeSessions(async e => {
-      if (e.provider.id === GITHUB_AUTH_PROVIDER_ID) {
-        await getGh(false);
+      if (e.provider.id === AUTH_PROVIDER) {
+        await getGh({ createIfNone: false });
       }
     });
   }
 }
 
-async function getGh(createIfNone = true): Promise<Octokit> {
-  if (gh) {
-    return gh;
-  }
+async function getGh(options: vscode.AuthenticationGetSessionOptions): Promise<Octokit> {
+  if (gh) return gh;
 
-  const session = await vscode.authentication.getSession(GITHUB_AUTH_PROVIDER_ID, SCOPES, { createIfNone });
+  const session = await vscode.authentication.getSession(AUTH_PROVIDER, SCOPES, options);
   if (!session?.accessToken) {
-    vscode.window.showErrorMessage('GitHub access denied');
+    throw new Error('GitHub access denied');
   }
-  gh = new Octokit({ auth: session!.accessToken });
+  gh = new Octokit({ auth: session.accessToken });
   registerListeners();
 
   return gh;
@@ -46,7 +44,7 @@ function buildEnv(data: any) {
 }
 
 export async function getRepo() {
-  const gh = await getGh();
+  const gh = await getGh({ createIfNone: true });
   const branch = await gh.rest.repos.getBranch({
     branch: BRANCH,
     owner: OWNER,
@@ -65,7 +63,7 @@ export async function getRepo() {
 }
 
 async function getEnv(path: string) {
-  const gh = await getGh();
+  const gh = await getGh({ createIfNone: true });
   const result: any = await gh.rest.repos.getContent({
     owner: OWNER,
     repo: REPO,
@@ -83,7 +81,7 @@ export async function search(query: string) {
   try {
     const settings = vscode.workspace.getConfiguration('as2.clients');
 
-    const gh = await getGh();
+    const gh = await getGh({ createIfNone: true });
     const searchResults = await gh.request('GET /search/code', {
       headers: {
         'X-GitHub-Api-Version': '2022-11-28',
@@ -139,60 +137,66 @@ export function actionsLink(client_key: string) {
 }
 
 export async function startWorkflow(client_key: string, type: 'update' | 'deploy', cancellationToken?: vscode.CancellationToken) {
-  const gh = await getGh();
+  const gh = await getGh({ createIfNone: true });
   const commonRequestParams = {
     owner: OWNER,
     repo: `${client_key}-auctionsoftware`,
     workflow_id: `${type}.yml`,
   };
+  const minutes = (minutes: number) => 60 * 1000 * minutes;
   const timeouts = {
-    start: 30 * 1000, // 30 seconds
-    update: 5 * 60 * 1000, // 5 minutes
-    deploy: 20 * 60 * 1000, // 20 minutes
+    start: minutes(0.5),
+    update: minutes(5),
+    deploy: minutes(30),
   };
 
   const actions_link = actionsLink(client_key);
+  type WorkflowFilter = RestEndpointMethodTypes['actions']['listWorkflowRuns']['parameters'] & {
+    statuses?: RestEndpointMethodTypes['actions']['listWorkflowRuns']['parameters']['status'][]
+  };
+  const getWorkflows = async ({ statuses = [undefined], ...parameters }: Partial<WorkflowFilter>) => {
+    type WorkflowRun = RestEndpointMethodTypes["actions"]["listWorkflowRuns"]["response"]['data']['workflow_runs'][0];
+    return (await Promise.all(
+      statuses.map(status => gh.actions.listWorkflowRuns({
+        ...commonRequestParams,
+        ...parameters,
+        status,
+      }))
+    )).reduce((runs, { data: { workflow_runs } }) => [...runs, ...workflow_runs], [] as WorkflowRun[]);
+  };
 
-  // check for any currently active runs
-  const { data: { workflow_runs: activeRuns } } = await gh.actions.listWorkflowRuns({
-    ...commonRequestParams,
-    status: 'in_progress',
-  });
-
+  const activeRuns = await getWorkflows({ statuses: ['in_progress', 'queued'] });
   if (activeRuns.length) {
     throw new ErrorWithOptions(`There is already an active ${type} workflow`, { link: actions_link + `/runs/${activeRuns[0].id}` });
   }
 
   // Start the workflow
-  await gh.actions.createWorkflowDispatch({
-    ...commonRequestParams,
-    ref: BRANCH,
-  });
+  await gh.actions.createWorkflowDispatch({ ref: BRANCH, ...commonRequestParams });
 
-  // Get the ID of the pending workflow
-  const pendingWorkflowID = await poll(async () => {
-    const { data: run } = await gh.actions.listWorkflowRuns({
-      ...commonRequestParams,
-      status: 'in_progress',
-    });
-    return run.workflow_runs[0]?.id;
+  // wait for the workflow to start
+  const pendingWorkflow = await poll(async () => {
+    return (await getWorkflows({ statuses: ['queued', 'in_progress'] }))[0];
   }, { timeout: timeouts.start, interval: timeouts.start / 5, cancellationToken });
 
-  if (!pendingWorkflowID) {
+  const startedWorkflow = pendingWorkflow?.status !== 'queued' ? pendingWorkflow : (
+    // all workers are busy, continue waiting for the workflow to start
+    await poll(async () => {
+      return (await getWorkflows({ statuses: ['in_progress'] }))[0];
+    }, { timeout: timeouts.update, cancellationToken })
+  );
+
+  if (startedWorkflow?.status !== 'in_progress') {
     throw new ErrorWithOptions(`Unable to find a pending ${type} workflow...`, { link: actions_link });
   }
 
   // Wait for the workflow to complete
   const completedWorkflow = await poll(async () => {
-    const { data: run } = await gh.actions.getWorkflowRun({
-      ...commonRequestParams,
-      run_id: pendingWorkflowID,
-    });
-    return run.status === 'completed' ? run : undefined;
+    const [completedWorkflowRun] = await getWorkflows({ run_id: startedWorkflow.id });
+    return completedWorkflowRun.status === 'completed' ? completedWorkflowRun : undefined;
   }, { timeout: timeouts[type], cancellationToken });
 
   if (!completedWorkflow) {
-    throw new ErrorWithOptions(`Timeout waiting for workflow run ${pendingWorkflowID} to complete`, { link: actions_link + `/runs/${pendingWorkflowID}` });
+    throw new ErrorWithOptions(`Timeout waiting for workflow run ${startedWorkflow.id} to complete`, { link: actions_link + `/runs/${startedWorkflow.id}` });
   } else {
     if (completedWorkflow.conclusion !== 'success') {
       throw new ErrorWithOptions(`${type} workflow ${completedWorkflow.conclusion}`, { link: completedWorkflow.html_url });
