@@ -4,7 +4,7 @@
   "publisher": "JacobSND",
   "description": "Auctioneer Software",
   "icon": "resources/AS.png",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "repository": {
     "type": "git",
     "url": "https://github.com/AuctionSoft"
@@ -156,6 +156,7 @@
     "@typescript-eslint/eslint-plugin": "^5.38.1",
     "@typescript-eslint/parser": "^5.38.1",
     "@vscode/test-electron": "^2.1.5",
+    "copy-webpack-plugin": "^13.0.0",
     "eslint": "^8.24.0",
     "glob": "^8.0.3",
     "mocha": "^10.0.0",

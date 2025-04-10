@@ -4,6 +4,11 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 ## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.4.3...HEAD)
 
+## [1.4.4](https://github.com/jacobSND/as-vscode/compare/v1.4.3...v1.4.4) - 2025-04-10
+
+### Changed
+ - Links: Client log links now use Loki instead of Graylog
+
 ## [1.4.3](https://github.com/jacobSND/as-vscode/compare/v1.4.1...v1.4.3) - 2024-08-14
 
 ### Changed
