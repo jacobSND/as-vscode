@@ -123,6 +123,10 @@ export async function search(query: string) {
             jenkinsLink.url = jenkinsLink.url + `job/${client.key}-auctionsoftware/`;
           }
         }
+        const logLink = overrides?.links?.find((link: any) => link.text === 'Logs');
+        if (logLink) {
+          logLink.url = logLink.url + `/namespace/${client.key}/logs?var-ds=aee2awjusqhogd&var-filters=namespace%7C%3D%7C${client.key}`;
+        }
         results.push({ ...client, ...overrides });
       }
     }
