@@ -29,7 +29,7 @@ const merge = (destination: Object, ...sources: Object[]) => mergeWith(destinati
   }
 });
 
-export async function getOverrides(settings: any, client: any) {
+export async function getOverrides(settings: any, client: any): Promise<ClientOverrides> {
   const defaults = await getDefaults();
   const settingsObject = JSON.parse(JSON.stringify(settings));
   const merged = merge(settingsObject, defaults);
@@ -39,4 +39,16 @@ export async function getOverrides(settings: any, client: any) {
   const clientOverrides = merged?.[client.IMAGE_KEY || client.APP_NAME || client.WEBSITE_KEY];
 
   return merge(clientOverrides, dbOverrides, defaultOverrides);
+}
+
+interface ClientOverrides {
+  identifier?: string;
+  cluster?: string | number;
+  sshUser?: string;
+  links?: {
+    text: string;
+    url: string;
+  }[];
+  hideInitPrompt?: boolean;
+  localPath?: string;
 }
