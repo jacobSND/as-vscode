@@ -3,12 +3,13 @@
 
 # Ignore extension configs
 .vscode/**
+.vscode-test/**
 
 # Ignore test files
-.vscode-test/**
 out/**
+test/**
 
-# Ignore source code
+# Ignore source code (webpack bundles everything into dist/)
 src/**
 
 # Ignore all webview-ui files except the build directory
@@ -18,16 +19,31 @@ webview-ui/scripts/**
 webview-ui/index.html
 webview-ui/README.md
 webview-ui/package.json
-webview-ui/package-lock.json
+webview-ui/pnpm-lock.yaml
 webview-ui/node_modules/**
+webview-ui/vite.config.ts
+webview-ui/tsconfig.json
 
-
-# Ignore Misc
-.yarnrc
+# Ignore development files
+node_modules/**
+.gitignore
+.eslintrc.json
+.nvmrc
+tsconfig.json
+webpack.config.js
 vsc-extension-quickstart.md
-**/.gitignore
-**/tsconfig.json
-**/vite.config.ts
-**/.eslintrc.json
+
+# Ignore build artifacts
 **/*.map
 **/*.ts
+!dist/**/*.js
+
+# Ignore package files
+*.vsix
+yarn.lock
+package-lock.json
+
+# Ignore misc
+.yarnrc
+.DS_Store
+Thumbs.db

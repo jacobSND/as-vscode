@@ -1,13 +1,21 @@
 {
 	"compilerOptions": {
-    "module": "commonjs",
-    "target": "es6",
+    "module": "ES2022",
+    "target": "ES2022",
     "outDir": "out",
-    "lib": ["es6", "dom"],
+    "lib": [
+      "ES2022",
+      "dom"
+    ],
     "sourceMap": true,
     "resolveJsonModule": true,
     "rootDir": "src",
-    "strict": true
+    "strict": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "exclude": ["node_modules", ".vscode-test", "webview-ui"]
 }
