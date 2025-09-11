@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { getAuctions } from "../as2";
+import { auctionSearch } from "../as2";
 import { openLocalProject, runTerminalCommand } from "../commands";
 import { actionsLink, search as ghSearch, startWorkflow } from "../github";
 import { getUri } from "../utilities/getUri";
@@ -135,7 +135,7 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
           });
         }
         case "auctions": {
-          const auctions = await getAuctions(value);
+          const auctions = await auctionSearch(value);
           const panel = vscode.window.createWebviewPanel(
             'auctions',
             'Auctions',

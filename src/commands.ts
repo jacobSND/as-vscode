@@ -156,7 +156,7 @@ export async function clientSearch() {
           {
             tooltip: 'Copy Cluster',
             iconPath: new vscode.ThemeIcon('server-environment'),
-            onSelect: () => vscode.env.clipboard.writeText(selection.cluster?.toString()),
+            onSelect: () => selection.cluster ? vscode.env.clipboard.writeText(selection.cluster?.toString()) : undefined,
           },
           {
             tooltip: 'Copy Domain',
@@ -166,7 +166,7 @@ export async function clientSearch() {
           {
             tooltip: 'Copy Database IP',
             iconPath: new vscode.ThemeIcon('database'),
-            onSelect: () => vscode.env.clipboard.writeText(selection.DB_IP_ADDR),
+            onSelect: () => vscode.env.clipboard.writeText(selection.db),
           },
         ]
       },

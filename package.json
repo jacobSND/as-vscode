@@ -23,6 +23,22 @@
     "onStartupFinished"
   ],
   "main": "./dist/extension.js",
+  "scripts": {
+    "install:all": "npm install && cd webview-ui && npm install",
+    "start:webview": "cd webview-ui && npm run start",
+    "build:webview": "cd webview-ui && npm run build",
+    "vscode:prepublish": "npm run package",
+    "vscode:publish": "npx @vscode/vsce publish",
+    "vscode:package": "npx @vscode/vsce package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "watch-tests": "tsc -p . --watch --outDir out",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "test": "npm run compile-tests && node ./out/test/runTest.js",
+    "lint": "eslint src --ext ts --fix",
+    "lint-check": "eslint src --ext ts"
+  },
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -42,6 +58,98 @@
         }
       ]
     },
+    "chatParticipants": [
+      {
+        "id": "as",
+        "name": "AS",
+        "description": "Auctioneer Software clients environments, auctions, and more",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "searchClients",
+            "description": "Search Auctioneer Software clients"
+          }
+        ]
+      }
+    ],
+    "languageModelTools": [
+      {
+        "name": "search_as_clients",
+        "displayName": "Search Auctioneer Software Clients",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "client",
+        "icon": "$(search)",
+        "tags": [
+          "as",
+          "clients"
+        ],
+        "userDescription": "Search Auctioneer Software clients by name, key, cluster, or other attributes",
+        "modelDescription": "Search for Auctioneer Software clients by key, name, url, cluster, or IP. Input should be a search query string. Returns a JSON array of clients with fields: key, name, url, cluster, database ip adderess, and local file path. This should be used to get client info and answer questions about AS clients. If no clients match the search criteria, it may return an empty list.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "The search query string, this should be a singular subject's name, key, url, or cluster"
+            }
+          },
+          "when": "chatParticipant == as"
+        }
+      },
+      {
+        "name": "search_as_auctions",
+        "displayName": "Search Auctioneer Software Client Auctions",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "auctions",
+        "icon": "$(search)",
+        "tags": [
+          "as",
+          "auctions"
+        ],
+        "userDescription": "Search Auctioneer Software client auctions by title, description, and more",
+        "modelDescription": "This tool allows searching through Auctioneer Software client auctions with keyword search and filtering options. It returns a list of matching auctions with their details. Details can include the auction title, description, type, status, start, and end times. This should be used to get auction info and answer questions about AS2 auctions. If no auctions match the search criteria, it may return an empty list.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "client_domain": {
+              "type": "string",
+              "description": "The domain of the Auctioneer Software client to search auctions on, e.g. https://auctions.example.com"
+            },
+            "variables": {
+              "type": "object",
+              "description": "Additional search variables",
+              "properties": {
+                "search": {
+                  "type": "string",
+                  "description": "The search query string, this can be any keyword or phrase to search auction titles and descriptions"
+                },
+                "filter": {
+                  "type": "object",
+                  "description": "Filter options for the auction search",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "description": "Filter by auction status, e.g. 'upcoming', 'live', 'closed'"
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "Filter by auction type, e.g. 'standard', 'dutch', 'sealed-bid'"
+                    }
+                  }
+                },
+                "count": {
+                  "type": "number",
+                  "description": "The number of results to return, default is 10"
+                }
+              }
+            }
+          },
+          "required": [
+            "client_domain"
+          ]
+        }
+      }
+    ],
     "menus": {
       "view/title": [
         {
@@ -140,21 +248,11 @@
       }
     }
   },
-  "scripts": {
-    "install:all": "npm install && cd webview-ui && npm install",
-    "start:webview": "cd webview-ui && npm run start",
-    "build:webview": "cd webview-ui && npm run build",
-    "vscode:prepublish": "npm run package",
-    "vscode:publish": "npx @vscode/vsce publish",
-    "vscode:package": "npx @vscode/vsce package",
-    "compile": "webpack",
-    "watch": "webpack --watch",
-    "watch-tests": "tsc -p . --watch --outDir out",
-    "package": "webpack --mode production --devtool hidden-source-map",
-    "compile-tests": "tsc -p . --outDir out",
-    "test": "npm run compile-tests && node ./out/test/runTest.js",
-    "lint": "eslint src --ext ts --fix",
-    "lint-check": "eslint src --ext ts"
+  "dependencies": {
+    "@octokit/rest": "^21.0.2",
+    "@vscode/codicons": "^0.0.36",
+    "@vscode/webview-ui-toolkit": "^1.4.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
@@ -175,12 +273,5 @@
     "typescript": "^5.6.2",
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4"
-  },
-  "dependencies": {
-    "@octokit/rest": "^21.0.2",
-    "@vscode/codicons": "^0.0.36",
-    "@vscode/webview-ui-toolkit": "^1.4.0",
-    "axios": "^1.7.7",
-    "lodash": "^4.17.21"
   }
 }

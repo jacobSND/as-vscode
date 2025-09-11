@@ -2,6 +2,8 @@ import * as vscode from "vscode";
 import { clientSearch, runTerminalCommand } from "./commands";
 import { init as initPanels } from "./panels";
 import { init } from "./init";
+import { registerChatParticipant } from "./ai/chatParticipant";
+import { registerChatTools } from "./ai/chatTool";
 
 export async function activate(context: vscode.ExtensionContext) {
 	try {
@@ -39,6 +41,9 @@ export async function activate(context: vscode.ExtensionContext) {
 		});
 
 		await initPanels(context);
+
+		registerChatTools(context);
+		registerChatParticipant(context);
 	} catch (error) {
 		console.error('Failed to activate Auctioneer Software extension:', error);
 		vscode.window.showErrorMessage(`Failed to activate Auctioneer Software extension: ${error}`);

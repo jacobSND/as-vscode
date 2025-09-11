@@ -237,7 +237,7 @@ interface ClientLink {
   url: string;
 }
 
-interface Client {
+export interface Client {
   label: string;
   key: string;
   name: string;
@@ -248,8 +248,6 @@ interface Client {
   db: string;
   repo: string;
   localPath: string;
-  // Additional environment variables
-  [key: string]: unknown;
 }
 
 interface ClientWithOverrides extends Omit<Client, 'cluster'> {
@@ -257,4 +255,5 @@ interface ClientWithOverrides extends Omit<Client, 'cluster'> {
   sshUser?: string;
   links?: ClientLink[];
   cluster?: number | string;
+  [key: string]: unknown;
 }
