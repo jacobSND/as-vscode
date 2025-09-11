@@ -83,6 +83,9 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
         <vscode-link class="db" title="Connect to DB" onClick={() => sendMessage({ command: 'connectDb', value: unwrap(client) })}>
           <span class="codicon codicon-database"></span>
         </vscode-link>
+        <vscode-link class="copilot" title={`Chat about ${client.name}`} onClick={() => sendMessage({ command: 'aiChat', value: unwrap(client) })}>
+          <span class="codicon codicon-copilot"></span>
+        </vscode-link>
         {!!client?.links?.length && <>
           <div class="links">
             <vscode-button

@@ -20,6 +20,10 @@ export function registerChatParticipant(extensionContext: vscode.ExtensionContex
         };
       }
 
+      if (request.prompt.startsWith('Hi!&nbsp;Lets chat about ')) {
+        stream.markdown(`Hi! I can answer questions about the Auctioneer Software project, clients, auctions, and more. Just let me know what you'd like to know!`);
+      }
+
       toolsContext.toolsToCall = parseToolCalls(request);
       await answerQuestion(request, token, stream, chatContext, toolsContext);
     } catch (error) {
@@ -68,7 +72,7 @@ async function parseInput(request: vscode.ChatRequest, token: vscode.Cancellatio
             "start_time_to": "ISO 8601 date string",
             "end_time_from": "ISO 8601 date string", 
             "end_time_to": "ISO 8601 date string", 
-            "type": "online|live|multipar|listing|real-estate-listing|sealed|cascading|dutch|mixed|phone-bidoff",
+            "type": undefined | "online|live|multipar|listing|real-estate-listing|sealed|cascading|dutch|mixed|phone-bidoff",
             "auction_status": [-100, 0, 50, 100, 200, 300, 400]
           }
         }
