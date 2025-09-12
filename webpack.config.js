@@ -50,7 +50,8 @@ const extensionConfig = {
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
-        { from: 'clientDefaults.json', to: '' }
+        { from: 'clientDefaults.json', to: '' },
+        { from: 'src/ai/instructions.md', to: 'src/ai/instructions.md' }
       ]
     })
   ],
