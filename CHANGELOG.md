@@ -2,7 +2,21 @@
 
 All notable changes to the "Auctioneer Software" extension will be documented in this file.
 
-## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.4.4...HEAD)
+## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.5.0...HEAD)
+
+## [1.5.0](https://github.com/jacobSND/as-vscode/compare/v1.4.4...v1.5.0) - 2025-09-12
+
+### Added
+ - ✨ AI Chat participant
+ - ✨ Added copilot chat action to clients panel
+  - Ask questions about Auctioneer Software project
+  - Search for clients and get details
+  - Search for client auctions and info
+ - ⚙️ Settings: Client Action visibility
+
+### Changed
+ - Updated dependencies
+ - Better types for github api calls
 
 ## [1.4.4](https://github.com/jacobSND/as-vscode/compare/v1.4.3...v1.4.4) - 2025-04-10
 

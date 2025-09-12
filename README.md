@@ -16,6 +16,10 @@ A vscode extension for searching and other common tasks related to the Auctionee
   - Links (Graphs, Logs, etc)
 - Commands to perform common actions (core update, start, etc)
 - Customizable settings for path overrides and more
+- AI Chat participant
+  - Get answers to questions about Auctioneer Software project
+  - Search for clients and get details
+  - Search for client auctions and info
 
 ## Getting Started
 1. [Install the extension](https://marketplace.visualstudio.com/items?itemName=JacobSND.auctionsoft)

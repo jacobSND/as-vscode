@@ -11,5 +11,16 @@ export async function welcome(context: vscode.ExtensionContext) {
       }
     });
   }
+
+  if (semver.lt(prevVersion, '1.5.0')) {
+    vscode.window.showInformationMessage('Auctioneer Software now has ⚙️ Settings to control client actions and an ✨ AI Chat participant @AS', 'View Settings', 'View Changelog', 'Dismiss').then((value) => {
+      if (value === 'View Settings') {
+        vscode.commands.executeCommand('workbench.action.openSettings', 'as2.clients.actions');
+      } else if (value === 'View Changelog') {
+        vscode.env.openExternal(vscode.Uri.parse("https://github.com/jacobSND/as-vscode/releases/tag/v1.5.0"));
+      }
+    });
+  }
+
   context.secrets.store('version', version);
 }
