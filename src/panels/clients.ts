@@ -167,7 +167,7 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
         }
         case "aiChat": {
           const client = value;
-          await vscode.commands.executeCommand('workbench.action.chat.open', vscode.l10n.t('@AS Hi!&nbsp;Lets chat about {0}', client.name));
+          await vscode.commands.executeCommand('workbench.action.chat.open', vscode.l10n.t('@AS Hi!&nbsp;Lets chat about #client {0}', client.name));
           break;
         }
         default: {

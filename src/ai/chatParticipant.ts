@@ -20,12 +20,17 @@ export function registerChatParticipant(extensionContext: vscode.ExtensionContex
         };
       }
 
-      if (request.prompt.startsWith('Hi!&nbsp;Lets chat about ')) {
-        stream.markdown(`Hi! I can answer questions about the Auctioneer Software project, clients, auctions, and more. Just let me know what you'd like to know!`);
+      let prompt = request.prompt.trim();
+      if (prompt.startsWith('Hi!&nbsp;Lets chat about ')) {
+        stream.markdown(`👋 **Hello! I can answer questions about:** \n`);
+        stream.markdown(` - **The Auctioneer Software project:** Getting started, debugging, common issues  \n`);
+        stream.markdown(` - **Clients:** Search and get details about core and custom clients \n`);
+        stream.markdown(` - **Auctions:** Search for and get info on a client's auctions \n`);
+        prompt = prompt.replace('Hi!&nbsp;', '').trim();
       }
 
-      toolsContext.toolsToCall = parseToolCalls(request);
-      await answerQuestion(request, token, stream, chatContext, toolsContext);
+      await processChatMessage({ ...request, prompt }, chatContext, stream, token);
+
     } catch (error) {
       console.error('Chat participant error:', error);
       stream.markdown(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`);
@@ -34,6 +39,11 @@ export function registerChatParticipant(extensionContext: vscode.ExtensionContex
 
   participant.iconPath = vscode.Uri.joinPath(extensionContext.extensionUri, 'resources', 'AS-chat.png');
   extensionContext.subscriptions.push(participant);
+}
+
+async function processChatMessage(request: vscode.ChatRequest, chatContext: vscode.ChatContext, stream: vscode.ChatResponseStream, token: vscode.CancellationToken) {
+  toolsContext.toolsToCall = parseToolCalls(request);
+  await answerQuestion(request, token, stream, chatContext, toolsContext);
 }
 
 function parseToolCalls(request: vscode.ChatRequest): ToolSet {
@@ -79,7 +89,7 @@ async function parseInput(request: vscode.ChatRequest, token: vscode.Cancellatio
       }
 
       Rules:
-      - subject: client name, domain, IP, cluster number, or 2-5 char key (empty string if none). convert to singular form if plural.
+      - subject: the main noun or noun phrase in the query, usually a client name, domain, IP, cluster number, or 2-5 char key (empty string if none). if the user query contains a #client reference, the subject is usually directly after that. convert to singular form if plural.
       - auction_search: null if not searching auctions, otherwise object with optional properties
       - search.text: optional text to search in auctions (IMPORTANT: do not use the subject, only use if the user asks about titles or descriptions)
       - count defaults to 10, order.column defaults to 'end_time', auction_status defaults to [100, 200]
@@ -220,6 +230,7 @@ async function answerQuestion(
       The clients data is an array of one or more clients.
       Important: The clients are search results from the subject "${client_search_query}". If the subject of the question does not seem to relate to this subject, remind the user to "use /clientSearch lookup a new client".
       Questions about whether the client is core or custom should refer to the "type" property.
+      Only use the tool "search_as_clients" to lookup a client if they are not in this list already.
     `}
     ${auctions && `
       auctions: ${JSON.stringify(auctions)}
