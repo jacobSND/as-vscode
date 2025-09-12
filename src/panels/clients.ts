@@ -6,10 +6,41 @@ import { getUri } from "../utilities/getUri";
 import { ErrorWithOptions } from "../utilities/error";
 import { stepper } from "../utilities/stepper";
 
+interface ActionSettings {
+  copilotChat: boolean;
+  buildDeploy: boolean;
+  githubRepo: boolean;
+  openProject: boolean;
+  githubDev: boolean;
+  connectDb: boolean;
+}
+
 export class ClientsPanel implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
+  private _configChangeListener?: vscode.Disposable;
 
   constructor(private readonly context: vscode.ExtensionContext) {}
+
+  private getActionSettings(): ActionSettings {
+    const config = vscode.workspace.getConfiguration('as2.clients.actions');
+    return {
+      copilotChat: config.get('copilotChat', true),
+      buildDeploy: config.get('buildDeploy', true),
+      githubRepo: config.get('githubRepo', true),
+      openProject: config.get('openProject', true),
+      githubDev: config.get('githubDev', true),
+      connectDb: config.get('connectDb', true)
+    };
+  }
+
+  private notifyWebviewOfSettings() {
+    if (this._view) {
+      this._view.webview.postMessage({
+        type: 'settingsUpdate',
+        payload: this.getActionSettings()
+      });
+    }
+  }
 
   async init() {
     let folder = vscode.workspace.workspaceFolders?.[0].uri.path.split('/').pop();
@@ -32,6 +63,17 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
 		};
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+
+    this._configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
+      if (event.affectsConfiguration('as2.clients.actions')) {
+        this.notifyWebviewOfSettings();
+      }
+    });
+    this.context.subscriptions.push(this._configChangeListener);
+
+    // Send initial settings
+    setTimeout(() => this.notifyWebviewOfSettings(), 2500);
+
     this.init();
 
     webviewView.webview.onDidReceiveMessage(async (message: any) => {

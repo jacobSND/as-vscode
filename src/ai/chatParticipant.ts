@@ -234,7 +234,7 @@ async function answerQuestion(
     `}
     ${auctions && `
       auctions: ${JSON.stringify(auctions)}
-      The auctions data is an array of auctions for the client "${client_search_query}".
+      The auctions data is an array of auctions for the client.
     `}
     Question: "${parsedInput.userMessage}"
     Answer:
