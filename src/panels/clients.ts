@@ -232,7 +232,7 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
 
     const stylesUri = getUri(webview, this.context.extensionUri, ["webview-ui", "build", "assets", "index.css"]);
     const scriptUri = DEV ? 'http://localhost:3300/src/index.tsx' : getUri(webview, this.context.extensionUri, ["webview-ui", "build", "assets", "index.js"]);
-    const codiconsUri = getUri(webview, this.context.extensionUri, ['node_modules', '@vscode/codicons', 'dist', 'codicon.css']);
+    const codiconsUri = webview.asWebviewUri(vscode.Uri.parse('https://unpkg.com/@vscode/codicons/dist/codicon.css'));
 
     return /*html*/ `
       <!DOCTYPE html>

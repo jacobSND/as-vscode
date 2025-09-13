@@ -8,7 +8,7 @@ export function registerChatParticipant(extensionContext: vscode.ExtensionContex
   const participant = vscode.chat.createChatParticipant('as', async (request, chatContext: vscode.ChatContext, stream, token) => {
     try {
       if (!project_info) {
-        project_info = await vscode.workspace.fs.readFile(vscode.Uri.joinPath(extensionContext.extensionUri, 'src', 'ai', 'instructions.md')).then(buffer => buffer.toString());
+        project_info = await vscode.workspace.fs.readFile(vscode.Uri.joinPath(extensionContext.extensionUri, 'dist', 'ai', 'instructions.md')).then(buffer => buffer.toString());
       }
 
       if (!toolsContext || chatContext.history.length === 0) {
