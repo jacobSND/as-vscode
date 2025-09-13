@@ -2,7 +2,12 @@
 
 All notable changes to the "Auctioneer Software" extension will be documented in this file.
 
-## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.5.0...HEAD)
+## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.5.2...HEAD)
+
+## [1.5.2](https://github.com/jacobSND/as-vscode/compare/v1.4.4...v1.5.0) - 2025-09-13
+
+### Fixed
+ - 🐛 Assets were not being included in the bundle
 
 ## [1.5.0](https://github.com/jacobSND/as-vscode/compare/v1.4.4...v1.5.0) - 2025-09-12
 
