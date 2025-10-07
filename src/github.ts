@@ -113,6 +113,9 @@ export async function search(query: string): Promise<ClientWithOverrides[]> {
           ? Number(db_identifying_octet.slice(-1)) + 1
           : undefined;
 
+        const repoPrefix = !settings.cloneViaHttps ? 'git@github.com:AuctionSoft/' : 'https://github.com/AuctionSoft/';
+        const repoSuffix = !settings.cloneViaHttps ? '.git' : '';
+
         const client: Client = {
           ...env,
           label: key || result.path || '',
@@ -126,6 +129,9 @@ export async function search(query: string): Promise<ClientWithOverrides[]> {
           repo: type === 'client'
             ? 'https://github.com/AuctionSoft/auctionsoftware'
             : `https://github.com/AuctionSoft/${env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY}-auctionsoftware`,
+          cloneRepo: type === 'client'
+            ? `${repoPrefix}auctionsoftware${repoSuffix}`
+            : `${repoPrefix}${env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY}-auctionsoftware${repoSuffix}`,
           localPath,
         };
 
@@ -247,6 +253,7 @@ export interface Client {
   domain: string;
   db: string;
   repo: string;
+  cloneRepo: string;
   localPath: string;
 }
 

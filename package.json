@@ -240,6 +240,11 @@
           "as2.clients.custom": {
             "type": "string",
             "description": "Path to custom repos directory"
+          },
+          "as2.clients.cloneViaHttps": {
+            "type": "boolean",
+            "default": false,
+            "description": "Clone repos via SSH instead of HTTPS"
           }
         }
       },

@@ -25,7 +25,7 @@ export function openLocalProject({ localPath, ...client }: any) {
     vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(localPath), true);
   } else {
     const options = [
-      { label: 'Clone Locally', onClick: () => runTerminalCommand(`git clone ${client.repo} ${localPath} && code ${localPath}`, { ttl: 0 }) },
+      { label: 'Clone Locally', onClick: () => runTerminalCommand(`git clone ${client.cloneRepo} ${localPath} && code ${localPath}`, { ttl: 0 }) },
       { label: 'Open on Github.dev', onClick: () => vscode.env.openExternal(vscode.Uri.parse(client.repo.replace('.com', '.dev'))) },
     ];
     vscode.window.showErrorMessage(
