@@ -113,6 +113,8 @@ export async function search(query: string): Promise<ClientWithOverrides[]> {
           ? Number(db_identifying_octet.slice(-1)) + 1
           : undefined;
 
+        const repoName = type === 'client' ? 'auctionsoftware' : `${env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY}-auctionsoftware`;
+
         const client: Client = {
           ...env,
           label: key || result.path || '',
@@ -123,9 +125,9 @@ export async function search(query: string): Promise<ClientWithOverrides[]> {
           cluster,
           domain: `${env.APP_DEFAULT_PROTOCOL || 'https'}://${env.APP_HOSTNAME}`,
           db: env.DB_IP_ADDR || '',
-          repo: type === 'client'
-            ? 'https://github.com/AuctionSoft/auctionsoftware'
-            : `https://github.com/AuctionSoft/${env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY}-auctionsoftware`,
+          repo: ['https://github.com', OWNER, repoName].join('/'),
+          repoOwner: OWNER,
+          repoName,
           localPath,
         };
 
@@ -247,6 +249,8 @@ export interface Client {
   domain: string;
   db: string;
   repo: string;
+  repoOwner: string;
+  repoName: string;
   localPath: string;
 }
 

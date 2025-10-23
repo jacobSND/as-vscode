@@ -24,8 +24,17 @@ export function openLocalProject({ localPath, ...client }: any) {
   if (fs.existsSync(localPath)) {
     vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(localPath), true);
   } else {
+    const cloneMethod: 'HTTPS' | 'SSH' | 'CLI' = vscode.workspace.getConfiguration('as2.clients').get('cloneMethod') || 'SSH';
+    let repoUrl = client.repo;
+    if (cloneMethod === 'SSH') {
+      repoUrl = `git@github.com:${client.repoOwner}/${client.repoName}.git`;
+    }
+    let terminalCommand = `git clone ${repoUrl} ${localPath} && code ${localPath}`;
+    if (cloneMethod === 'CLI') {
+      terminalCommand = `gh repo clone ${client.repoOwner}/${client.repoName} ${localPath} && code ${localPath}`;
+    }
     const options = [
-      { label: 'Clone Locally', onClick: () => runTerminalCommand(`git clone ${client.repo} ${localPath} && code ${localPath}`, { ttl: 0 }) },
+      { label: 'Clone Locally', onClick: () => runTerminalCommand(terminalCommand, { ttl: 0 }) },
       { label: 'Open on Github.dev', onClick: () => vscode.env.openExternal(vscode.Uri.parse(client.repo.replace('.com', '.dev'))) },
     ];
     vscode.window.showErrorMessage(

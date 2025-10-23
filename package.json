@@ -240,6 +240,21 @@
           "as2.clients.custom": {
             "type": "string",
             "description": "Path to custom repos directory"
+          },
+          "as2.clients.cloneMethod": {
+            "type": "string",
+            "default": "SSH",
+            "enum": [
+              "HTTPS",
+              "SSH",
+              "CLI"
+            ],
+            "enumDescriptions": [
+              "HTTPS cloning",
+              "SSH cloning (requires SSH key setup)",
+              "CLI cloning (requires GH CLI setup)"
+            ],
+            "description": "Preferred cloning method for repositories"
           }
         }
       },
