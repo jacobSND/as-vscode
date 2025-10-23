@@ -35,6 +35,35 @@
 				"npm: watch-tests"
 			],
 			"problemMatcher": []
+		},
+		{
+			"type": "npm",
+			"script": "start:webview",
+			"problemMatcher": {
+				"owner": "webpack-dev-server",
+				"pattern": {
+					"regexp": "."
+				},
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": "Starting",
+					"endsPattern": "ready"
+				}
+			},
+			"isBackground": true,
+			"presentation": {
+				"reveal": "silent",
+				"group": "watchers"
+			},
+			"group": "build"
+		},
+		{
+			"label": "dev: extension with webview",
+			"dependsOn": [
+				"npm: start:webview",
+				"npm: watch"
+			],
+			"problemMatcher": []
 		}
 	]
 }

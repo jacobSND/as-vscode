@@ -18,7 +18,7 @@
 			"outFiles": [
 				"${workspaceFolder}/dist/**/*.js"
 			],
-			"preLaunchTask": "${defaultBuildTask}"
+			"preLaunchTask": "dev: extension with webview"
 		},
 		{
 			"name": "Extension Tests",
