@@ -4,6 +4,8 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 ## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.5.2...HEAD)
 
+## [1.6.0](https://github.com/jacobSND/as-vscode/compare/v1.5.2...v1.6.0) - 2025-10-24
+
 ### Added
  - ⚙️ Setting: Repo Clone method (SSH, HTTPS, CLI)
  - ⚙️ Setting: Custom Terminal Command to allow running a custom terminal command using client variables
@@ -14,7 +16,7 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 ### Fixed
   - 🐛 Moved codicon loading back to node_modules for faster startup
 
-## [1.5.2](https://github.com/jacobSND/as-vscode/compare/v1.4.4...v1.5.0) - 2025-09-13
+## [1.5.2](https://github.com/jacobSND/as-vscode/compare/v1.5.0...v1.5.2) - 2025-09-13
 
 ### Fixed
  - 🐛 Assets were not being included in the bundle
