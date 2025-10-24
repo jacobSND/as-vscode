@@ -273,35 +273,37 @@
         "type": "object",
         "title": "Client Actions",
         "properties": {
-          "as2.clients.actions.copilotChat": {
-            "type": "boolean",
-            "default": true,
-            "description": "Show AI chat button"
-          },
-          "as2.clients.actions.buildDeploy": {
-            "type": "boolean",
-            "default": true,
-            "description": "Show build/deploy action"
-          },
-          "as2.clients.actions.githubRepo": {
-            "type": "boolean",
-            "default": true,
-            "description": "Show GitHub repository link"
-          },
-          "as2.clients.actions.openProject": {
-            "type": "boolean",
-            "default": true,
-            "description": "Show VS Code project opener"
-          },
-          "as2.clients.actions.githubDev": {
-            "type": "boolean",
-            "default": true,
-            "description": "Show GitHub.dev opener"
-          },
-          "as2.clients.actions.connectDb": {
-            "type": "boolean",
-            "default": true,
-            "description": "Show database connection"
+          "as2.clients.actionsEnabled": {
+            "type": "array",
+            "description": "Select Enabled Actions for Clients",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Copilot Chat",
+                "Build & Deploy",
+                "Github Repo",
+                "Open Project",
+                "Github Dev",
+                "Connect to DB"
+              ],
+              "enumDescriptions": [
+                "Start Chatting with AI about this client",
+                "Trigger build and/or deploy",
+                "Open GitHub repository",
+                "Open repo in VS Code",
+                "Open repo on gitHub.dev",
+                "Connect to database server over SSH"
+              ]
+            },
+            "uniqueItems": true,
+            "default": [
+              "Copilot Chat",
+              "Build & Deploy",
+              "Github Repo",
+              "Open Project",
+              "Github Dev",
+              "Connect to DB"
+            ]
           }
         }
       }

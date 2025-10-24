@@ -1,40 +1,14 @@
-import { Component, createSignal, onMount } from "solid-js";
+import { Component } from "solid-js";
 import { useKeyDownList } from "@solid-primitives/keyboard";
 import VscodeIcon from '../../assets/vscode.svg?component-solid';
 import GitDevIcon from '../../assets/github-dev.svg?component-solid';
 import './style.scss';
 import { unwrap } from "solid-js/store";
+import { ActionVisibility } from "../../utilities/useActionSettings";
 
-interface ActionVisibility {
-  copilotChat: boolean;
-  buildDeploy: boolean;
-  githubRepo: boolean;
-  openProject: boolean;
-  githubDev: boolean;
-  connectDb: boolean;
-}
-
-export const Client: Component<any> = ({ client, sendMessage }) => {
+export const Client: Component<Props> = ({ client, sendMessage, actionSettings }) => {
   const pressedKeys = useKeyDownList();
   const ctrl = () => pressedKeys().includes('CONTROL');
-
-  const [actionSettings, setActionSettings] = createSignal<ActionVisibility>({
-    copilotChat: true,
-    buildDeploy: true,
-    githubRepo: true,
-    openProject: true,
-    githubDev: true,
-    connectDb: true
-  });
-
-  onMount(() => {
-    window.addEventListener('message', (event) => {
-      const message = event.data;
-      if (message.type === 'settingsUpdate') {
-        setActionSettings(message.payload);
-      }
-    });
-  });
 
   return (
     <div id={`client-${client.key}`} class="client">
@@ -81,23 +55,23 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
           {Object.keys(client).map((field: any) => (
             <vscode-data-grid-row>
               <vscode-data-grid-cell grid-column="1">{field}</vscode-data-grid-cell>
-              <vscode-data-grid-cell grid-column="2">{client[field as keyof any]}</vscode-data-grid-cell>
+              <vscode-data-grid-cell grid-column="2">{client[field]}</vscode-data-grid-cell>
             </vscode-data-grid-row>
           ))}
         </vscode-data-grid>
       </details>
       <div class="actions">
-        {actionSettings().copilotChat && (
+        {actionSettings().includes('Copilot Chat') && (
           <vscode-link class="copilot" title={`Chat about ${client.name}`} onClick={() => sendMessage({ command: 'aiChat', value: unwrap(client) })}>
             <span class="codicon codicon-copilot"></span>
           </vscode-link>
         )}
-        {client.type === 'custom' && actionSettings().buildDeploy && (
+        {client.type === 'custom' && actionSettings().includes('Build & Deploy') && (
           <vscode-link class="Build/Deploy" title="Build/Deploy" onClick={() => sendMessage({ command: 'buildDeploy', value: unwrap(client) })}>
             <span class="codicon codicon-play-circle"></span>
           </vscode-link>
         )}
-        {actionSettings().githubRepo && (
+        {actionSettings().includes('Github Repo') && (
           <vscode-link class="github" title="View on Github" href={client.repo} onClick={(e: any) => {
             if (e.altKey) {
               sendMessage({ command: 'copy', value: client.repo })
@@ -108,17 +82,17 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
             <span class="codicon codicon-github"></span>
           </vscode-link>
         )}
-        {actionSettings().openProject && (
+        {actionSettings().includes('Open Project') && (
           <vscode-link class="folder" title="Open in VS Code" onClick={() => sendMessage({ command: 'openProject', value: unwrap(client) })}>
             <VscodeIcon />
           </vscode-link>
         )}
-        {actionSettings().githubDev && (
+        {actionSettings().includes('Github Dev') && (
           <vscode-link class="github-dev" title="Open on Github.dev" href={client.repo.replace('.com', '.dev')}>
             <GitDevIcon />
           </vscode-link>
         )}
-        {actionSettings().connectDb && (
+        {actionSettings().includes('Connect to DB') && (
           <vscode-link class="db" title="Connect to DB" onClick={() => sendMessage({ command: 'connectDb', value: unwrap(client) })}>
             <span class="codicon codicon-database"></span>
           </vscode-link>
@@ -147,4 +121,10 @@ export const Client: Component<any> = ({ client, sendMessage }) => {
       </div>
     </div>
   );
+}
+
+type Props = {
+  client: Record<string, any>;
+  sendMessage: (message: any) => void;
+  actionSettings: () => ActionVisibility
 }

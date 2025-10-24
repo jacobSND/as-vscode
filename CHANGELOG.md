@@ -7,6 +7,9 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 ### Added
  - ⚙️ Settings: Repo Clone method (SSH, HTTPS, CLI)
 
+### Changed
+  - ⚙️ Settings: Improve Client Action visibility control
+
 ## [1.5.2](https://github.com/jacobSND/as-vscode/compare/v1.4.4...v1.5.0) - 2025-09-13
 
 ### Fixed

@@ -1,5 +1,6 @@
 import { Component } from "solid-js";
 import { vscode } from "../../utilities/vscode";
+import { useActionSettings } from "../../utilities/useActionSettings";
 import { clients } from '../../store';
 import { Client } from "../Client";
 import './style.scss';
@@ -12,6 +13,7 @@ function onSearch(e?: any) {
 
 export const Clients: Component = () => {
   window.addEventListener("focus", () => document.getElementById('search-input')?.focus());
+  const actionSettings = useActionSettings();
   return (
     <main>
       <form id="search-container" onSubmit={onSearch}>
@@ -46,6 +48,7 @@ export const Clients: Component = () => {
                 <Client
                   client={client}
                   sendMessage={(message: any) => vscode.postMessage(message)}
+                  actionSettings={actionSettings}
                 />
               ))}
             </div>

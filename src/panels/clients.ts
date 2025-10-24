@@ -6,14 +6,14 @@ import { getUri } from "../utilities/getUri";
 import { ErrorWithOptions } from "../utilities/error";
 import { stepper } from "../utilities/stepper";
 
-interface ActionSettings {
-  copilotChat: boolean;
-  buildDeploy: boolean;
-  githubRepo: boolean;
-  openProject: boolean;
-  githubDev: boolean;
-  connectDb: boolean;
-}
+const defaultActions = [
+  "Copilot Chat",
+  "Build & Deploy",
+  "Github Repo",
+  "Open Project",
+  "Github Dev",
+  "Connect to DB"
+] as const;
 
 export class ClientsPanel implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
@@ -21,16 +21,9 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
 
   constructor(private readonly context: vscode.ExtensionContext) {}
 
-  private getActionSettings(): ActionSettings {
-    const config = vscode.workspace.getConfiguration('as2.clients.actions');
-    return {
-      copilotChat: config.get('copilotChat', true),
-      buildDeploy: config.get('buildDeploy', true),
-      githubRepo: config.get('githubRepo', true),
-      openProject: config.get('openProject', true),
-      githubDev: config.get('githubDev', true),
-      connectDb: config.get('connectDb', true)
-    };
+  private getActionSettings(): typeof defaultActions {
+    const config = vscode.workspace.getConfiguration('as2.clients');
+    return config.get('actionsEnabled', defaultActions);
   }
 
   private notifyWebviewOfSettings() {
@@ -65,14 +58,11 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
     this._configChangeListener = vscode.workspace.onDidChangeConfiguration(event => {
-      if (event.affectsConfiguration('as2.clients.actions')) {
+      if (event.affectsConfiguration('as2.clients.actionsEnabled')) {
         this.notifyWebviewOfSettings();
       }
     });
     this.context.subscriptions.push(this._configChangeListener);
-
-    // Send initial settings
-    setTimeout(() => this.notifyWebviewOfSettings(), 2500);
 
     this.init();
 
@@ -211,6 +201,9 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
           const client = value;
           await vscode.commands.executeCommand('workbench.action.chat.open', vscode.l10n.t('@AS Hi!&nbsp;Lets chat about #client {0}', client.name));
           break;
+        }
+        case 'getSettings': {
+          return this.notifyWebviewOfSettings();
         }
         default: {
           console.log({ message });
