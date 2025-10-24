@@ -31,5 +31,6 @@ export type ActionVisibility = (
   "Github Repo" |
   "Open Project" |
   "Github Dev" |
-  "Connect to DB"
+  "Connect to DB" |
+  "Custom Terminal Command"
 )[];

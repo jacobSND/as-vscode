@@ -271,6 +271,17 @@
       },
       {
         "type": "object",
+        "title": "Custom Terminal Command",
+        "properties": {
+          "as2.clients.customTerminalCommand": {
+            "type": "string",
+            "default": "",
+            "description": "Custom terminal command template to run for 'Open Terminal' action. Use {placeholder} variables from the client object."
+          }
+        }
+      },
+      {
+        "type": "object",
         "title": "Client Actions",
         "properties": {
           "as2.clients.actionsEnabled": {
@@ -284,7 +295,8 @@
                 "Github Repo",
                 "Open Project",
                 "Github Dev",
-                "Connect to DB"
+                "Connect to DB",
+                "Custom Terminal Command"
               ],
               "enumDescriptions": [
                 "Start Chatting with AI about this client",
@@ -292,7 +304,8 @@
                 "Open GitHub repository",
                 "Open repo in VS Code",
                 "Open repo on gitHub.dev",
-                "Connect to database server over SSH"
+                "Connect to database server over SSH",
+                "Run a custom command in the terminal using client variables (requires setup)"
               ]
             },
             "uniqueItems": true,

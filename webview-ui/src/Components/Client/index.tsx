@@ -97,6 +97,11 @@ export const Client: Component<Props> = ({ client, sendMessage, actionSettings }
             <span class="codicon codicon-database"></span>
           </vscode-link>
         )}
+        {actionSettings().includes('Custom Terminal Command') && (
+          <vscode-link class="terminal" title="Open Terminal" onClick={() => sendMessage({ command: 'customTerminalCommand', value: unwrap(client) })}>
+            <span class="codicon codicon-terminal"></span>
+          </vscode-link>
+        )}
         {!!client?.links?.length && <>
           <div class="links">
             <vscode-button

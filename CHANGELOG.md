@@ -5,7 +5,8 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 ## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.5.2...HEAD)
 
 ### Added
- - ⚙️ Settings: Repo Clone method (SSH, HTTPS, CLI)
+ - ⚙️ Setting: Repo Clone method (SSH, HTTPS, CLI)
+ - ⚙️ Setting: Custom Terminal Command to allow running a custom terminal command using client variables
 
 ### Changed
   - ⚙️ Settings: Improve Client Action visibility control

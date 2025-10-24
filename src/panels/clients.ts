@@ -83,6 +83,28 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
         case "connectDb": {
           return runTerminalCommand(`ssh ${value?.sshUser || 'snd_root'}@${value.db}`, { name: `${value.key} (AS2)`, ttl: 0 });
         }
+        case "customTerminalCommand": {
+          const config = vscode.workspace.getConfiguration('as2.clients');
+          const terminalCommandTemplate = config.get<string>('customTerminalCommand', '');
+          if (!terminalCommandTemplate) {
+            return vscode.window.showErrorMessage('No custom terminal command template set in settings.');
+          }
+          const missingOrInvalidKeys: string[] = [];
+          const terminalCommand = terminalCommandTemplate.replace(/\{(\w+)\}/g, (match, key) => {
+            const replacement = value[key];
+            if (replacement === undefined || typeof replacement === 'object') {
+              missingOrInvalidKeys.push(key);
+              return match;
+            }
+            return replacement;
+          });
+          if (missingOrInvalidKeys.length) {
+            return vscode.window.showWarningMessage(
+              `The following placeholders were unable to be replaced: ${missingOrInvalidKeys.map(k => `{${k}}`).join(', ')}`
+            );
+          }
+          return runTerminalCommand(terminalCommand, { name: `${value.key} (AS2)`, ttl: 0 });
+        }
         case "openProject": {
           return openLocalProject(value);
         }
