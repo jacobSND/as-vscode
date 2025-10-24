@@ -26,6 +26,8 @@ webview-ui/tsconfig.json
 
 # Ignore development files
 node_modules/**
+!node_modules/@vscode/codicons/dist/codicon.css
+!node_modules/@vscode/codicons/dist/codicon.ttf
 .gitignore
 .eslintrc.json
 .nvmrc

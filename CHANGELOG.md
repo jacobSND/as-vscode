@@ -10,6 +10,9 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 ### Changed
   - ⚙️ Settings: Improve Client Action visibility control
 
+### Fixed
+  - 🐛 Moved codicon loading back to node_modules for faster startup
+
 ## [1.5.2](https://github.com/jacobSND/as-vscode/compare/v1.4.4...v1.5.0) - 2025-09-13
 
 ### Fixed
