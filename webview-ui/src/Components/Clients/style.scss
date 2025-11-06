@@ -46,8 +46,66 @@
   }
 
   #clients {
-    overflow-y: overlay;
-    height: calc(100% - 75px); // header height
+    overflow-y: auto;
+    height: 100%;
+    
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(121, 121, 121, 0);
+      border-radius: 0;
+      transition: background-color 0.3s ease;
+    }
+    
+    &:hover::-webkit-scrollbar-thumb {
+      background-color: var(--vscode-scrollbarSlider-background, rgba(121, 121, 121, 0.4));
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: var(--vscode-scrollbarSlider-hoverBackground, rgba(100, 100, 100, 0.7));
+    }
+
+    &::-webkit-scrollbar-button {
+      display: none;
+    }
+    
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color 0.3s ease;
+    
+    &:hover {
+      scrollbar-color: var(--vscode-scrollbarSlider-background, rgba(121, 121, 121, 0.4)) transparent;
+    }
+  }
+}
+
+article {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  main {
+    flex: 1;
+  }
+
+  footer {
+    margin: 8px;
+    padding: 2px;
+    border: 1px solid var(--vscode-panel-border, #3c3c3c);
+    background-color: var(--vscode-panel-background, #252526);
+    border-radius: 4px;
+    overflow: visible;
+
+    .client .actions .links .links-container {
+      top: unset;
+      bottom: 30px;
+      border-radius: 5px;
+    }
+
+    &:has(.client details[open]) {
+      overflow-y: auto;
+    }
   }
 }
 

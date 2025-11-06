@@ -15,46 +15,62 @@ export const Clients: Component = () => {
   window.addEventListener("focus", () => document.getElementById('search-input')?.focus());
   const actionSettings = useActionSettings();
   return (
-    <main>
-      <form id="search-container" onSubmit={onSearch}>
-        <vscode-text-field
-          id="search-input"
-          name="search"
-          placeholder="Search Clients..."
-          autofocus
-          onKeyDown={(e: any) => {
-            if (e.key === 'Enter') {
-              onSearch();
-            }
-          }}
-        >
-          <span slot="start" class="codicon codicon-search"></span>
-        </vscode-text-field>
-        <vscode-button id="search-button" type="submit" onClick={onSearch}>search</vscode-button>
-      </form>
-      {(!!clients?.query || !!clients?.list?.length) && (
-        <div class="results-container">
-          {clients.loading && <vscode-progress-ring />}
-          {!clients?.loading && <>
-            <div class="results-details">
-              <div class="count">
-                {clients?.list?.length} clients found
+    <article>
+      <header>
+        <form id="search-container" onSubmit={onSearch}>
+          <vscode-text-field
+            id="search-input"
+            name="search"
+            placeholder="Search Clients..."
+            initial-value={clients.query}
+            autofocus
+            onKeyDown={(e: any) => {
+              if (e.key === 'Enter') {
+                onSearch();
+              }
+            }}
+          >
+            <span slot="start" class="codicon codicon-search"></span>
+          </vscode-text-field>
+          <vscode-button id="search-button" type="submit" onClick={onSearch}>search</vscode-button>
+        </form>
+      </header>
+      <main>
+        {(!!clients?.query || !!clients?.list?.length) && (
+          <div class="results-container">
+            {clients.loading && <vscode-progress-ring />}
+            {!clients?.loading && <>
+              <div class="results-details">
+                <div class="count">
+                  {clients?.list?.length} clients found
+                </div>
+                <span class="separator">&nbsp;-&nbsp;</span>
+                <vscode-link class="search-url" href={`https://github.com/AuctionSoft/as2-clients/search?q=${clients.query}`}>View on Github</vscode-link>
               </div>
-              <span class="separator">&nbsp;-&nbsp;</span>
-              <vscode-link class="search-url" href={`https://github.com/AuctionSoft/as2-clients/search?q=${clients.query}`}>View on Github</vscode-link>
-            </div>
-            <div id="clients">
-              {clients.list.map((client: any) => (
-                <Client
-                  client={client}
-                  sendMessage={(message: any) => vscode.postMessage(message)}
-                  actionSettings={actionSettings}
-                />
-              ))}
-            </div>
-          </>}
-        </div>
+              <div id="clients">
+                {clients.list.map((client: any) => (
+                  <Client
+                    client={client}
+                    sendMessage={(message: any) => vscode.postMessage(message)}
+                    actionSettings={actionSettings}
+                  />
+                ))}
+              </div>
+            </>}
+          </div>
+        )}
+      </main>
+      {clients.current_client && (
+        <footer>
+          {clients.current_client.key !== 'core' && (
+            <Client
+              client={clients.current_client}
+              sendMessage={(message: any) => vscode.postMessage(message)}
+              actionSettings={actionSettings}
+            />
+          )}
+        </footer>
       )}
-    </main>
+    </article>
   );
 }
