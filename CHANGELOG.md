@@ -4,6 +4,9 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 ## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.5.2...HEAD)
 
+### Added
+  - 🎨 Pinned the current project to the footer of the panel for quick and persistent access
+
 ## [1.6.0](https://github.com/jacobSND/as-vscode/compare/v1.5.2...v1.6.0) - 2025-10-24
 
 ### Added

@@ -20,22 +20,26 @@
   .main {
     background-color: inherit;
     z-index: 1;
-    .title {
+    
+    .title, .subtitle {
       display: flex;
+      gap: 6px;
       align-items: center;
       margin-bottom: 0;
-      font-size: 1em;
+      
+      &.title {
+        font-size: 1em;
+      }
 
       .key {
         text-transform: uppercase;
       }
-    }
-    .subtitle {
-      display: flex;
-      align-items: center;
 
       .admin-domain {
         color: inherit;
+        width: 22px;
+        aspect-ratio: 1;
+        margin-bottom: -8px;
       }
     }
   }
@@ -88,7 +92,7 @@
         position: absolute;
         top: 30px;
         right: -15px;
-        min-width: 100vw;
+        min-width: calc(100vw - 40px);
         z-index: 1;
         background-color: var(--vscode-list-activeSelectionBackground,  transparent);
         padding: 10px;
@@ -114,13 +118,5 @@
   }
   .details {
     margin-top: 0.5rem;
-  }
-  vscode-divider {
-    display: block;
-    margin-top: 2rem;
-  }
-
-  &:last-of-type vscode-divider {
-    display: none;
   }
 }

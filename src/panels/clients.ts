@@ -37,10 +37,18 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
 
   async init() {
     let folder = vscode.workspace.workspaceFolders?.[0].uri.path.split('/').pop();
-    if (folder?.includes('-auctionsoftware')) {
-      const results = await ghSearch(folder.split('auctionsoftware')?.[0]);
+    let client = !folder?.includes('auctionsoftware') ? null : {
+      key: folder?.includes('-auctionsoftware') ? folder.split('-auctionsoftware')[0] : 'core'
+    };
+    this?._view?.webview?.postMessage({ action: 'current_client', value: client });
+
+    if (client && client.key !== 'core') {
+      const results = await ghSearch(client.key);
       if (results?.length) {
-        return this?._view?.webview?.postMessage({ action: 'search', value: results });
+        client = results.find(client => client.key === client.key) || null;
+        if (client) {
+          this?._view?.webview?.postMessage({ action: 'current_client', value: client });
+        }
       }
     }
   }
@@ -221,7 +229,7 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
         }
         case "aiChat": {
           const client = value;
-          await vscode.commands.executeCommand('workbench.action.chat.open', vscode.l10n.t('@AS Hi!&nbsp;Lets chat about #client {0}', client.name));
+          await vscode.commands.executeCommand('workbench.action.chat.open', vscode.l10n.t('@AS Hi!&nbsp;Lets chat about #client {0}', client.name || client.key));
           break;
         }
         case 'getSettings': {
