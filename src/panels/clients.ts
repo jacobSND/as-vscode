@@ -3,8 +3,6 @@ import { auctionSearch } from "../as2";
 import { openLocalProject, runTerminalCommand } from "../commands";
 import { actionsLink, search as ghSearch, startWorkflow } from "../github";
 import { getUri } from "../utilities/getUri";
-import { ErrorWithOptions } from "../utilities/error";
-import { stepper } from "../utilities/stepper";
 
 const defaultActions = [
   "Copilot Chat",
@@ -120,77 +118,24 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
           return vscode.window.showQuickPick([
             { label: 'Core Update', description: 'Update the core files', value: 'update' },
             { label: 'Build', description: 'Build the project', value: 'build' },
-            { label: 'Deploy', description: 'Deploy the project', value: 'deploy' },
           ], {
             canPickMany: true,
             placeHolder: '⚠️ Selected actions will run on gh actions ⚠️',
           }).then(async (values) => {
             if (!values) return;
-            vscode.window.withProgress({
-              location: vscode.ProgressLocation.Notification,
-              title: client.key.toUpperCase(),
-              cancellable: true,
-            }, async (progress, cancelationToken) => {
-              const actions_link = actionsLink(client.key);
-              const cancelationMessage = 'Polling cancelled, any running actions will continue to run unless cancelled manually';
-              const options: { label: string, onClick: () => void }[] = [{
-                label: 'View',
-                onClick: () => vscode.env.openExternal(vscode.Uri.parse(actions_link)),
-              }];
-              const onClick = (clicked?: string) => {
-                const option = options.find(option => option.label === clicked);
-                option?.onClick();
-              };
-              cancelationToken.onCancellationRequested(() => vscode.window.showInformationMessage(cancelationMessage, ...options.map(({ label }) => label)).then(onClick));
-              const { step, total } = stepper({ total: values.length });
-              const incrementPercent = 100 / total + 1;
-              progress.report({ increment: 0 });
 
-              try {
-                if (values.some(value => value.value === 'update')) {
-                  progress.report({ increment: incrementPercent, message: `(${step()}/${total}) Running [Core update](${actions_link})...` });
-                  await startWorkflow(client.key, 'update');
-                }
+            if (values.some(value => value.value === 'update')) {
+              const inputs = values.some(value => value.value === 'build') ? { build: true } : undefined;
+              startWorkflow(client.key, 'update', inputs);
+            } else if (values.some(value => value.value === 'build')) {
+              startWorkflow(client.key, 'deploy');
+            }
 
-                if (values.some(value => value.value === 'build')) {
-                  progress.report({ increment: incrementPercent, message: `(${step()}/${total}) Running [Build](${actions_link})...` });
-                  await startWorkflow(client.key, 'deploy');
-                }
-
-                if (values.some(value => value.value === 'deploy')) {
-                  progress.report({ increment: incrementPercent, message: `(${step()}/${total}) Running [Deploy](${actions_link})...` });
-                  // TODO: use jenkins key to trigger deploy
-                  const jenkins_link = client.links.find((link: any) => link.text === 'Jenkins')?.url;
-                  if (jenkins_link) {
-                    options.push({
-                      label: 'Deploy',
-                      onClick: () => vscode.env.openExternal(vscode.Uri.parse(jenkins_link)),
-                    });
-                  }
-                }
-
-                vscode.window.showInformationMessage(`${client.key.toUpperCase()} completed!`, ...options.map(({ label }) => label)).then(onClick);
-              } catch (error) {
-                let message = 'Unknown Error running actions';
-                let options: { label: string; onClick: () => void }[] = [];
-
-                if (error instanceof Error) {
-                  message = error.message;
-                  if (error instanceof ErrorWithOptions && error.details?.link) {
-                    const errorLink = error.details?.link;
-                    options = [{
-                      label: 'Details',
-                      onClick: () => vscode.env.openExternal(vscode.Uri.parse(errorLink))
-                    }];
-                  }
-                }
-
-                vscode.window.showErrorMessage(message, ...options.map(({ label }) => label)).then(clicked => {
-                  const option = options.find(option => option.label === clicked);
-                  option?.onClick();
-                });
-              } finally {
-                progress.report({ increment: 100 });
+            const message = 'Running ' + [...values.map(v => v.label)].join(' & ') + ` for ${client.key.toUpperCase()}`;
+            vscode.window.showInformationMessage(message, 'View').then(clicked => {
+              if (clicked) {
+                const actions_link = actionsLink(client.key);
+                vscode.env.openExternal(vscode.Uri.parse(actions_link));
               }
             });
           });

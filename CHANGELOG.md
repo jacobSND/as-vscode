@@ -7,6 +7,9 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 ### Added
   - 🎨 Pinned the current project to the footer of the panel for quick and persistent access
 
+### Changed
+  - Deploy action now uses input parameters to chain actions instead of polling/watching. This does drop the ability to get notified of deploy completion, but greatly improves performance and reliability.
+
 ## [1.6.0](https://github.com/jacobSND/as-vscode/compare/v1.5.2...v1.6.0) - 2025-10-24
 
 ### Added
