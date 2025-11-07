@@ -12,18 +12,23 @@ export const clients = createMutable({
     this.query = value;
     if (value) {
       this.loading = true;
-      return vscode.postMessage({ command: 'search', value });
+      vscode.postMessage({ command: 'search', value });
+    } else {
+      this.list = [];
     }
-    this.list = [];
+    const prevState = vscode.getState() || {};
+    vscode.setState({ ...prevState, query: value, clients: [] });
   },
   set(clients = []) {
     this.list = clients;
     this.loading = false;
-    vscode.setState({ clients, query: this.query });
+    const prevState = vscode.getState() || {};
+    vscode.setState({ ...prevState, clients });
   },
   setCurrentClient(client = null) {
     this.current_client = client;
-    vscode.setState({ current_client: client });
+    const prevState = vscode.getState() || {};
+    vscode.setState({ ...prevState, current_client: client });
   }
 });
 

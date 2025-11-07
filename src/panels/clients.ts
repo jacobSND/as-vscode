@@ -40,12 +40,11 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
     let client = !folder?.includes('auctionsoftware') ? null : {
       key: folder?.includes('-auctionsoftware') ? folder.split('-auctionsoftware')[0] : 'core'
     };
-    this?._view?.webview?.postMessage({ action: 'current_client', value: client });
 
     if (client && client.key !== 'core') {
       const results = await ghSearch(client.key);
       if (results?.length) {
-        client = results.find(client => client.key === client.key) || null;
+        client = results.find(c => c.key === client?.key) || null;
         if (client) {
           this?._view?.webview?.postMessage({ action: 'current_client', value: client });
         }
