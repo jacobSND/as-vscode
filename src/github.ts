@@ -1,8 +1,6 @@
 import * as vscode from 'vscode';
 import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 import { getOverrides } from './utilities/overrides';
-import { poll } from './utilities/poll';
-import { ErrorWithOptions } from './utilities/error';
 
 const AUTH_PROVIDER = 'github';
 const SCOPES = ['user:email', 'repo', 'workflow'] as const;
@@ -10,17 +8,6 @@ const BRANCH = 'master';
 export const OWNER = 'AuctionSoft';
 export const REPO = 'as2-clients';
 let gh: Octokit | undefined = undefined;
-let subscription: vscode.Disposable | undefined = undefined;
-
-function registerListeners() {
-  if (!subscription) { // handle login/out
-    subscription = vscode.authentication.onDidChangeSessions(async e => {
-      if (e.provider.id === AUTH_PROVIDER) {
-        await getGh({ createIfNone: false });
-      }
-    });
-  }
-}
 
 async function getGh(options: vscode.AuthenticationGetSessionOptions): Promise<Octokit> {
   if (gh) return gh;
@@ -29,10 +16,7 @@ async function getGh(options: vscode.AuthenticationGetSessionOptions): Promise<O
   if (!session?.accessToken) {
     throw new Error('GitHub access denied');
   }
-  gh = new Octokit({ auth: session.accessToken });
-  registerListeners();
-
-  return gh;
+  return new Octokit({ auth: session.accessToken });
 }
 
 function buildEnv(data: string): EnvData {
@@ -162,72 +146,17 @@ export function actionsLink(client_key: string) {
   return `https://github.com/${OWNER}/${client_key}-auctionsoftware/actions`;
 }
 
-export async function startWorkflow(client_key: string, type: 'update' | 'deploy', cancellationToken?: vscode.CancellationToken) {
+type WorkflowInputs = { [key: string]: unknown } | undefined;
+export async function startWorkflow(client_key: string, type: 'update' | 'deploy', inputs?: WorkflowInputs) {
   const gh = await getGh({ createIfNone: true });
-  const commonRequestParams = {
+
+  return gh.actions.createWorkflowDispatch({
     owner: OWNER,
     repo: `${client_key}-auctionsoftware`,
     workflow_id: `${type}.yml`,
-  };
-  const minutes = (minutes: number) => 60 * 1000 * minutes;
-  const timeouts = {
-    start: minutes(0.5),
-    update: minutes(5),
-    deploy: minutes(30),
-  };
-
-  const actions_link = actionsLink(client_key);
-  type WorkflowFilter = RestEndpointMethodTypes['actions']['listWorkflowRuns']['parameters'] & {
-    statuses?: RestEndpointMethodTypes['actions']['listWorkflowRuns']['parameters']['status'][]
-  };
-  const getWorkflows = async ({ statuses = [undefined], ...parameters }: Partial<WorkflowFilter>) => {
-    type WorkflowRun = RestEndpointMethodTypes["actions"]["listWorkflowRuns"]["response"]['data']['workflow_runs'][0];
-    return (await Promise.all(
-      statuses.map(status => gh.actions.listWorkflowRuns({
-        ...commonRequestParams,
-        ...parameters,
-        status,
-      }))
-    )).reduce((runs, { data: { workflow_runs } }) => [...runs, ...workflow_runs], [] as WorkflowRun[]);
-  };
-
-  const activeRuns = await getWorkflows({ statuses: ['in_progress', 'queued'] });
-  if (activeRuns.length) {
-    throw new ErrorWithOptions(`There is already an active ${type} workflow`, { link: actions_link + `/runs/${activeRuns[0].id}` });
-  }
-
-  // Start the workflow
-  await gh.actions.createWorkflowDispatch({ ref: BRANCH, ...commonRequestParams });
-
-  // wait for the workflow to start
-  const pendingWorkflow = await poll(async () => {
-    return (await getWorkflows({ statuses: ['queued', 'in_progress'] }))[0];
-  }, { timeout: timeouts.start, interval: timeouts.start / 5, cancellationToken });
-
-  const startedWorkflow = pendingWorkflow?.status !== 'queued' ? pendingWorkflow : (
-    // all workers are busy, continue waiting for the workflow to start
-    await poll(async () => {
-      return (await getWorkflows({ statuses: ['in_progress'] }))[0];
-    }, { timeout: timeouts.update, cancellationToken })
-  );
-
-  if (startedWorkflow?.status !== 'in_progress') {
-    throw new ErrorWithOptions(`Unable to find a pending ${type} workflow...`, { link: actions_link });
-  }
-
-  // Wait for the workflow to complete
-  const completedWorkflow = await poll(async () => {
-    const [completedWorkflowRun] = await getWorkflows({ run_id: startedWorkflow.id });
-    return completedWorkflowRun.status === 'completed' ? completedWorkflowRun : undefined;
-  }, { timeout: timeouts[type], cancellationToken });
-
-  if (!completedWorkflow) {
-    throw new ErrorWithOptions(`Timeout waiting for workflow run ${startedWorkflow.id} to complete`, { link: actions_link + `/runs/${startedWorkflow.id}` });
-  } else {
-    if (completedWorkflow.conclusion !== 'success') {
-      throw new ErrorWithOptions(`${type} workflow ${completedWorkflow.conclusion}`, { link: completedWorkflow.html_url });
-    }
-  }
+    ref: BRANCH,
+    inputs,
+  });
 }
 
 interface EnvData {
