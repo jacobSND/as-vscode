@@ -6,6 +6,7 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 ### Added
   - 🎨 Pinned the current project to the footer of the panel for quick and persistent access
+  - 📌 Allow pinning/unpinning clients from the clients panel
 
 ### Changed
   - Deploy action now uses input parameters to chain actions instead of polling/watching. This does drop the ability to get notified of deploy completion, but greatly improves performance and reliability.

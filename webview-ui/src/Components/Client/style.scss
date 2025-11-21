@@ -2,6 +2,7 @@
   --badge-background: var(--button-primary-background);
   background-color: var(--vscode-sideBar-background);
   padding: 10px 15px;
+  view-transition-name: var(--client-transition-name);
 
   &:not(&:last-of-type) {
     border-bottom: calc(var(--border-width) * 1px) solid var(--divider-background);
@@ -15,6 +16,12 @@
   &:has(details[open]) .main {
     position: sticky;
     top: 0;
+  }
+
+  .pin-button {
+    float: right;
+    cursor: pointer;
+    color: var(--vscode-search-resultsInfoForeground, #cccccca6);
   }
   
   .main {

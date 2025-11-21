@@ -8,9 +8,14 @@ import type { Client as ClientType } from "./types";
 import './style.scss';
 import { Title } from "./Title";
 
-export const Client: Component<ClientProps> = ({ client, sendMessage, actionSettings }) => {
+export const Client: Component<ClientProps> = ({ client, sendMessage, actionSettings, isPinned, togglePinned }) => {
   return (
-    <div id={`client-${client.key}`} class="client">
+    <div
+      id={`client-${client.key}`}
+      class="client"
+      style={{ "--client-transition-name": `client-${client.key}` }}
+    >
+      <span class={`pin-button codicon codicon-${isPinned ? "close" : "pinned"}`} title={isPinned ? "Unpin Client" : "Pin Client"} onClick={togglePinned}></span>
       <div class="main">
         <Title client={client} sendMessage={sendMessage} />
         <Subtitle client={client} />
@@ -106,6 +111,8 @@ export const Client: Component<ClientProps> = ({ client, sendMessage, actionSett
 
 export type ClientProps = {
   client: ClientType;
+  isPinned?: boolean;
+  togglePinned?: () => void;
   sendMessage: (message: any) => void;
   actionSettings: () => ActionVisibility
 }

@@ -5,6 +5,7 @@ const initialState: any = vscode.getState();
 
 export const clients = createMutable({
   current_client: initialState?.current_client || null,
+  current_client_index: initialState?.current_client_index,
   list: initialState?.clients || [],
   loading: false,
   query: initialState?.query || '',
@@ -16,6 +17,7 @@ export const clients = createMutable({
     } else {
       this.list = [];
     }
+    this.current_client_index = null;
     const prevState = vscode.getState() || {};
     vscode.setState({ ...prevState, query: value, clients: [] });
   },
@@ -25,8 +27,26 @@ export const clients = createMutable({
     const prevState = vscode.getState() || {};
     vscode.setState({ ...prevState, clients });
   },
-  setCurrentClient(client = null) {
+  add(client = null, index?: number) {
+    if (!client) return;
+    const current_clients = this.list;
+    this.list = [];
+    this.list = current_clients.toSpliced(typeof index === 'number' ? index : current_clients.length, 0, client);
+    const prevState = vscode.getState() || {};
+    vscode.setState({ ...prevState, clients: this.list });
+  },
+  remove(client: any = null) {
+    if (!client) return;
+    const current_clients = this.list;
+    this.list = [];
+    this.list = current_clients.filter((c: any) => c.key !== client.key);
+    const prevState = vscode.getState() || {};
+    vscode.setState({ ...prevState, clients: this.list });
+  },
+  setCurrentClient(client: any = null) {
+    this.current_client = null;
     this.current_client = client;
+    this.current_client_index = this.list.findIndex((c: any) => c.key === client?.key);
     const prevState = vscode.getState() || {};
     vscode.setState({ ...prevState, current_client: client });
   }

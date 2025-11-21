@@ -51,6 +51,15 @@ export const Clients: Component = () => {
                 {clients.list.map((client: any) => (
                   <Client
                     client={client}
+                    togglePinned={() => {
+                      document.startViewTransition(() => {
+                        if (clients.current_client) {
+                          clients.add(clients.current_client, clients.current_client_index);
+                        }
+                        clients.setCurrentClient(client);
+                        clients.remove(client);
+                      });
+                    }}
                     sendMessage={(message: any) => vscode.postMessage(message)}
                     actionSettings={actionSettings}
                   />
@@ -65,6 +74,13 @@ export const Clients: Component = () => {
           {clients.current_client.key !== 'core' && (
             <Client
               client={clients.current_client}
+              isPinned
+              togglePinned={() => {
+                document.startViewTransition(() => {
+                  clients.add(clients.current_client, clients.current_client_index);
+                  clients.setCurrentClient(null);
+                });
+              }}
               sendMessage={(message: any) => vscode.postMessage(message)}
               actionSettings={actionSettings}
             />
