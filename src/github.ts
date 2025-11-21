@@ -122,9 +122,14 @@ export async function search(query: string): Promise<ClientWithOverrides[]> {
             jenkinsLink.url = jenkinsLink.url + `job/${client.key}-auctionsoftware/`;
           }
         }
-        const logLink = overrides?.links?.find((link: ClientLink) => link.text === 'Logs');
+        const logLink = overrides?.links?.find((link) => link.text === 'Logs');
         if (logLink) {
           logLink.url = logLink.url + `/namespace/${client.key}/logs?var-ds=aee2awjusqhogd&var-filters=namespace%7C%3D%7C${client.key}`;
+        }
+
+        const graphLink = overrides?.links?.find((link) => link.text === 'Graphs');
+        if (graphLink) {
+          graphLink.url = graphLink.url + `?var-namespace=${client.key}`;
         }
 
         const clientWithOverrides: ClientWithOverrides = {
