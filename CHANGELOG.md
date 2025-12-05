@@ -2,7 +2,12 @@
 
 All notable changes to the "Auctioneer Software" extension will be documented in this file.
 
-## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.7.0...HEAD)
+## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.7.1...HEAD)
+
+## [1.7.1](https://github.com/jacobSND/as-vscode/compare/v1.7.0...v1.7.1) - 2025-12-05
+
+### Fixed
+  - 🐛 Links container was hidden behind next client in list
 
 ## [1.7.0](https://github.com/jacobSND/as-vscode/compare/v1.6.0...v1.7.0) - 2025-11-21
 
