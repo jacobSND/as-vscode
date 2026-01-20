@@ -4,6 +4,9 @@ All notable changes to the "Auctioneer Software" extension will be documented in
 
 ## [Unreleased](https://github.com/jacobSND/as-vscode/compare/v1.7.1...HEAD)
 
+### Added
+  - 🔍 Search by affiliate domain
+
 ## [1.7.1](https://github.com/jacobSND/as-vscode/compare/v1.7.0...v1.7.1) - 2025-12-05
 
 ### Fixed

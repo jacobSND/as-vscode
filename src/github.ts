@@ -66,6 +66,37 @@ async function getEnv(path: string): Promise<EnvData> {
   throw new Error('Expected string content from GitHub API');
 }
 
+function isDomain(query: string): boolean {
+  const cleanQuery = query.replace(/^https?:\/\//, '');
+  const domainPattern = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+  return domainPattern.test(cleanQuery);
+}
+
+async function fetchWebsiteKey(domain: string): Promise<string | null> {
+  try {
+    const url = domain.startsWith('http') ? domain : `https://${domain}`;
+
+    const response = await fetch(`${url}/api/about`, {
+      method: "GET",
+      redirect: "follow",
+      headers: {
+        "Accept": "*/*",
+        "User-Agent": "Mozilla/5.0 (compatible; VSCode-AS2-Extension/1.0)"
+      },
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    return data?.website_key;
+  } catch (e) {
+    // Silently fail if the domain doesn't respond or doesn't have /api/about
+    return null;
+  }
+}
+
 export async function search(query: string): Promise<ClientWithOverrides[]> {
   const results: ClientWithOverrides[] = [];
   try {
@@ -138,6 +169,14 @@ export async function search(query: string): Promise<ClientWithOverrides[]> {
         };
 
         results.push(clientWithOverrides);
+      }
+    }
+
+    // If no results found and query looks like a domain, try affiliate domain fallback
+    if (results.length === 0 && isDomain(query)) {
+      const websiteKey = await fetchWebsiteKey(query);
+      if (websiteKey) {
+        return await search(`${websiteKey}-`);
       }
     }
   } catch (e) {
