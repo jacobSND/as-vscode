@@ -83,6 +83,7 @@
           "as",
           "clients"
         ],
+        "when": "chatParticipant == as",
         "userDescription": "Search Auctioneer Software clients by name, key, cluster, or other attributes",
         "modelDescription": "Search for Auctioneer Software clients by key, name, url, cluster, or IP. Input should be a search query string. Returns a JSON array of clients with fields: key, name, url, cluster, database ip adderess, and local file path. This should be used to get client info and answer questions about AS clients. If no clients match the search criteria, it may return an empty list.",
         "inputSchema": {
@@ -92,8 +93,7 @@
               "type": "string",
               "description": "The search query string, this should be a singular subject's name, key, url, or cluster"
             }
-          },
-          "when": "chatParticipant == as"
+          }
         }
       },
       {
@@ -106,6 +106,7 @@
           "as",
           "auctions"
         ],
+        "when": "chatParticipant == as",
         "userDescription": "Search Auctioneer Software client auctions by title, description, and more",
         "modelDescription": "This tool allows searching through Auctioneer Software client auctions with keyword search and filtering options. It returns a list of matching auctions with their details. Details can include the auction title, description, type, status, start, and end times. This should be used to get auction info and answer questions about AS2 auctions. If no auctions match the search criteria, it may return an empty list.",
         "inputSchema": {
@@ -235,11 +236,15 @@
         "properties": {
           "as2.clients.core": {
             "type": "string",
-            "description": "Path to local core repo"
+            "markdownDescription": "Path to the local [AS2 core](https://github.com/AuctionSoft/auctionsoftware) repository.\n\n**Example**: `/home/user/projects/auctionsoftware`",
+            "scope": "machine",
+            "order": 1
           },
           "as2.clients.custom": {
             "type": "string",
-            "description": "Path to custom repos directory"
+            "markdownDescription": "Path to the custom repositories directory.\n\n**Example**: `/home/user/projects/custom-repos`",
+            "scope": "machine",
+            "order": 2
           },
           "as2.clients.cloneMethod": {
             "type": "string",
@@ -254,7 +259,8 @@
               "SSH cloning (requires SSH key setup)",
               "CLI cloning (requires GH CLI setup)"
             ],
-            "description": "Preferred cloning method for repositories"
+            "markdownDescription": "Preferred cloning method for repositories. [ℹ️](https://docs.github.com/en/get-started/git-basics/about-remote-repositories)",
+            "order": 3
           }
         }
       },
@@ -264,8 +270,8 @@
         "properties": {
           "as2.clients.overrides": {
             "type": "object",
-            "description": "Provide overrides by client key (localPath, cluster, etc)",
-            "additionalProperties": true
+            "additionalProperties": true,
+            "markdownDescription": "Override client-specific settings.\n\n**Examples**:\n```json\n{\n  \"clientkey\": {\n    \"localPath\": \"/custom/path/to/client\",\n    \"cluster\": \"prod-west\"\n  },\n  \"*\": {\n    \"links\": [\n      {\n        \"text\": \"Auctions List\",\n        \"url\": \"http://as-tools.snd.internal/auctions\"\n      }\n    ]\n  }\n}\n```"
           }
         }
       },
@@ -275,8 +281,7 @@
         "properties": {
           "as2.clients.customTerminalCommand": {
             "type": "string",
-            "default": "",
-            "description": "Custom terminal command template to run for 'Open Terminal' action. Use {placeholder} variables from the client object."
+            "markdownDescription": "Custom terminal command template to run for 'Open Terminal' action using `{placeholder}` variables from the client object.\n\n**Examples**:\n```bash\n# Kubernetes management\nk9s --context prod{cluster} -n {key} -c deployments --headless\n\n# SSH to database server\nssh {sshUser}@{db}\n\n# Open client directory and start dev server\ncd {localPath} && rush update && rush build && rush start\n\n# Clone or pull latest changes\ncd {localPath} || git clone {githubUrl} {localPath}\n```"
           }
         }
       },
@@ -286,7 +291,7 @@
         "properties": {
           "as2.clients.actionsEnabled": {
             "type": "array",
-            "description": "Select Enabled Actions for Clients",
+            "markdownDescription": "Select Enabled Actions for Clients",
             "items": {
               "type": "string",
               "enum": [
