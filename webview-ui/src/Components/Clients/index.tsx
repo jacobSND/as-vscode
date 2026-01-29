@@ -3,6 +3,7 @@ import { vscode } from "../../utilities/vscode";
 import { useActionSettings } from "../../utilities/useActionSettings";
 import { clients } from '../../store';
 import { Client } from "../Client";
+import type { Client as ClientType } from "../Client/types";
 import './style.scss';
 
 function onSearch(e?: any) {
@@ -48,7 +49,7 @@ export const Clients: Component = () => {
                 <vscode-link class="search-url" href={`https://github.com/AuctionSoft/as2-clients/search?q=${clients.query}`}>View on Github</vscode-link>
               </div>
               <div id="clients">
-                {clients.list.map((client: any) => (
+                {clients.list.map((client: ClientType | null) => !client ? null : (
                   <Client
                     client={client}
                     togglePinned={() => {

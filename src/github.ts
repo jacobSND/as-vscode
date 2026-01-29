@@ -97,8 +97,7 @@ async function fetchWebsiteKey(domain: string): Promise<string | null> {
   }
 }
 
-export async function search(query: string): Promise<ClientWithOverrides[]> {
-  const results: ClientWithOverrides[] = [];
+export async function search(query: string, onResult?: (results: (ClientWithOverrides | null)[]) => void) {
   try {
     const settings = vscode.workspace.getConfiguration('as2.clients');
 
@@ -110,65 +109,75 @@ export async function search(query: string): Promise<ClientWithOverrides[]> {
       q: `${query}+repo:${OWNER}/${REPO}`,
     });
 
-    for (const result of searchResults.data.items || []) {
-      const pathMatch = result.path.match(/^(client|custom|disabled_client)_env\/(.+)\.env$/i);
-      if (!pathMatch) continue;
+    const pathRegex = /^(client|custom|disabled_client)_env\/(.+)\.env$/i;
+    const results = (searchResults.data.items || []).filter(item => item.path.match(pathRegex));
+    // pre-fill array for accurate UI count on client with partial results
+    const items: (ClientWithOverrides | null)[] = new Array(results.length).fill(null);
 
-      const [, type, key] = pathMatch;
-      const env = key ? await getEnv(result.path) : null;
-      if (env) {
-        const clientKey = env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY;
-        const localPath: string = type === 'client'
-          ? settings.core
-          : `${settings.custom}/${clientKey}-auctionsoftware`;
+    for (const [index, result] of results.entries()) {
+      try {
+        const pathMatch = result.path.match(pathRegex);
+        if (!pathMatch) continue;
 
-        const dbIpParts = env.DB_IP_ADDR?.split('.');
-        const db_identifying_octet = dbIpParts?.[2]; // TODO: find a better way to automatically determine cluster
-        const cluster = db_identifying_octet?.startsWith('11')
-          ? Number(db_identifying_octet.slice(-1)) + 1
-          : undefined;
+        const [, type, key] = pathMatch;
+        const env = key ? await getEnv(result.path) : null;
+        if (env) {
+          const clientKey = env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY;
+          const localPath: string = type === 'client'
+            ? settings.core
+            : `${settings.custom}/${clientKey}-auctionsoftware`;
 
-        const repoName = type === 'client' ? 'auctionsoftware' : `${env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY}-auctionsoftware`;
+          const dbIpParts = env.DB_IP_ADDR?.split('.');
+          const db_identifying_octet = dbIpParts?.[2]; // TODO: find a better way to automatically determine cluster
+          const cluster = db_identifying_octet?.startsWith('11')
+            ? Number(db_identifying_octet.slice(-1)) + 1
+            : undefined;
 
-        const client: Client = {
-          ...env,
-          label: key || result.path || '',
-          key: key.toLowerCase(),
-          name: env.CLIENT_NAME || '',
-          githubUrl: result.html_url,
-          type: (type === 'client' ? 'core' : type) as Client['type'],
-          cluster,
-          domain: `${env.APP_DEFAULT_PROTOCOL || 'https'}://${env.APP_HOSTNAME}`,
-          db: env.DB_IP_ADDR || '',
-          repo: ['https://github.com', OWNER, repoName].join('/'),
-          repoOwner: OWNER,
-          repoName,
-          localPath,
-        };
+          const repoName = type === 'client' ? 'auctionsoftware' : `${env.IMAGE_KEY || env.APP_NAME || env.WEBSITE_KEY}-auctionsoftware`;
 
-        const overrides = await getOverrides(settings.overrides, client);
-        if (client.type === 'custom') {
-          const jenkinsLink = overrides?.links?.find((link: ClientLink) => link.text === 'Jenkins');
-          if (jenkinsLink) {
-            jenkinsLink.url = jenkinsLink.url + `job/${client.key}-auctionsoftware/`;
+          const client: Client = {
+            ...env,
+            label: key || result.path || '',
+            key: key.toLowerCase(),
+            name: env.CLIENT_NAME || '',
+            githubUrl: result.html_url,
+            type: (type === 'client' ? 'core' : type) as Client['type'],
+            cluster,
+            domain: `${env.APP_DEFAULT_PROTOCOL || 'https'}://${env.APP_HOSTNAME}`,
+            db: env.DB_IP_ADDR || '',
+            repo: ['https://github.com', OWNER, repoName].join('/'),
+            repoOwner: OWNER,
+            repoName,
+            localPath,
+          };
+
+          const overrides = await getOverrides(settings.overrides, client);
+          if (client.type === 'custom') {
+            const jenkinsLink = overrides?.links?.find((link: ClientLink) => link.text === 'Jenkins');
+            if (jenkinsLink) {
+              jenkinsLink.url = jenkinsLink.url + `job/${client.key}-auctionsoftware/`;
+            }
           }
-        }
-        const logLink = overrides?.links?.find((link) => link.text === 'Logs');
-        if (logLink) {
-          logLink.url = logLink.url + `/namespace/${client.key}/logs?var-ds=aee2awjusqhogd&var-filters=namespace%7C%3D%7C${client.key}`;
-        }
+          const logLink = overrides?.links?.find((link) => link.text === 'Logs');
+          if (logLink) {
+            logLink.url = logLink.url + `/namespace/${client.key}/logs?var-ds=aee2awjusqhogd&var-filters=namespace%7C%3D%7C${client.key}`;
+          }
 
-        const graphLink = overrides?.links?.find((link) => link.text === 'Graphs');
-        if (graphLink) {
-          graphLink.url = graphLink.url + `?var-namespace=${client.key}`;
+          const graphLink = overrides?.links?.find((link) => link.text === 'Graphs');
+          if (graphLink) {
+            graphLink.url = graphLink.url + `?var-namespace=${client.key}`;
+          }
+
+          const clientWithOverrides: ClientWithOverrides = {
+            ...client,
+            ...overrides,
+          };
+
+          items[index] = clientWithOverrides;
+          onResult?.(items);
         }
-
-        const clientWithOverrides: ClientWithOverrides = {
-          ...client,
-          ...overrides,
-        };
-
-        results.push(clientWithOverrides);
+      } catch (error) {
+        console.error('Error processing search result:', error);
       }
     }
 
@@ -176,14 +185,13 @@ export async function search(query: string): Promise<ClientWithOverrides[]> {
     if (results.length === 0 && isDomain(query)) {
       const websiteKey = await fetchWebsiteKey(query);
       if (websiteKey) {
-        return await search(`${websiteKey}-`);
+        return await search(`${websiteKey}-`, onResult);
       }
     }
   } catch (e) {
     const error = e as Error;
     vscode.window.showWarningMessage(`Github Error: ${error?.message || 'Unknown error'}`);
   }
-  return results;
 }
 
 export function actionsLink(client_key: string) {

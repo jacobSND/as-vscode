@@ -77,10 +77,14 @@ export class ClientsPanel implements vscode.WebviewViewProvider {
 
       switch (command) {
         case "search": {
-          const results = await vscode.window.withProgress({
+          await vscode.window.withProgress({
             location: { viewId: 'as2-clients' },
-          }, async () => await ghSearch(value));
-          return this?._view?.webview?.postMessage({ action: 'search', value: results });
+          }, async () => {
+            await ghSearch(value, (results) => {
+              this?._view?.webview?.postMessage({ action: 'search', value: results });
+            });
+          });
+          break;
         }
         case "copy": {
           return vscode.env.clipboard.writeText(value);
