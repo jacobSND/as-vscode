@@ -23,7 +23,7 @@ export const Client: Component<ClientProps> = ({ client, sendMessage, actionSett
       <details>
         <summary> Details
           <span class="tags">
-            {client.type && <vscode-tag class="tag"><span class="type">{client.type}</span></vscode-tag>}
+            {client.type && <vscode-tag class="tag"><span class="type">{client.type?.replaceAll('_', ' ')}</span></vscode-tag>}
             {client.cluster && <vscode-tag class="tag"><span class="cluster">Cluster {client.cluster}</span></vscode-tag>}
             {!client.cluster && client.db && <vscode-tag class="tag"><span class="db">{client.db}</span></vscode-tag>}
           </span>
